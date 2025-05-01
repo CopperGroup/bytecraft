@@ -2,7 +2,7 @@ export const Store = {
   "name": "ByteCraft",
   "currency": "UAH",
   "currency_sign": "₴",
-  "domain": "https://fo-scandinavia.vercel.app",
+  "domain": "https://bytecraft-store.vercel.app",
   "database": "ByteCraftPeripherals_2025_03_16",
   "default_image": {
     "product_card": 0,
