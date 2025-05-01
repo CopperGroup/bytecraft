@@ -7,9 +7,9 @@ import LinkButton from "../interface/LinkButton"
 import { Store } from "@/constants/store"
 
 const features = [
-  { title: "Інновації", description: "Сучасні технології та найновіші пристрої" },
-  { title: "Підтримка", description: "Експертні поради та технічна допомога на все життя" },
-  { title: "Надійність", description: "Преміальна якість та перевірені гарантії" },
+  { title: "Максимальна потужність", description: "Тільки топові девайси для перемоги у будь-якій грі" },
+  { title: "Геймерська підтримка", description: "Поради, рекомендації та допомога від про-гравців" },
+  { title: "Надійні бренди", description: "Лише перевірені виробники з бездоганною репутацією" },
 ]
 
 export default function AboutUs() {
@@ -35,8 +35,7 @@ export default function AboutUs() {
             >
               <h2 className="text-4xl font-semibold text-gray-900 tracking-tight">Про {Store.name}</h2>
               <p className="text-lg text-gray-500 leading-relaxed">
-                Ми створюємо колекції, що поєднують інновації, продуктивність та надійність. Наші пристрої та аксесуари
-                розроблені для тих, хто цінує якість та сучасні технології у кожній деталі.
+              {Store.name} — твоя база топових геймерських девайсів. Ми відбираємо найкраще: мишки, клавіатури, гарнітури та аксесуари, яким довіряють професіонали. Жодного компромісу — тільки перевірене залізо для перемог.
               </p>
               <div className="space-y-8 pt-4">
                 {features.map((feature, index) => (
@@ -84,7 +83,7 @@ export default function AboutUs() {
                 />
               </div>
               <div className="absolute -bottom-8 -left-8 max-w-[260px] p-6 bg-white shadow-lg rounded-2xl">
-                <p className="text-base font-medium text-gray-900">Інновації в технологіях з досконалістю</p>
+                <p className="text-base font-medium text-gray-900">Девайси, яким довіряють геймери</p>
               </div>
             </motion.div>
           </div>

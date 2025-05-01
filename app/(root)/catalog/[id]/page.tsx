@@ -4,6 +4,7 @@ import { fetchProductPageInfo } from "@/lib/actions/cache"
 import { pretifyProductName } from "@/lib/utils"
 import { generateMetaDescription, generateKeywords, stripHtml, generateSeoTitle } from "@/lib/seo-utils"
 import type { Metadata, ResolvingMetadata } from "next"
+import SeasonHitBanner from "@/components/banner/SeasonHitBanner"
 
 // Types for better type safety
 type Props = {
@@ -241,6 +242,7 @@ const Page = async ({ params }: Props) => {
       />
 
       <section className="max-lg:-mt-24">
+        {/* <SeasonHitBanner subtitle="Найгарячіші пропозиції цього сезону" height="30px" className="max-w-[1200px]"/> */}
         <ProductPage productJson={JSON.stringify(product)} selectParams={selectParams} />
       </section>
     </>

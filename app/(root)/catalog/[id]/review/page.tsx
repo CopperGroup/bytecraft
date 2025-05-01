@@ -17,10 +17,11 @@ export default function ProductReviewPage({
   searchParams,
 }: {
   params: { id: string }
-  searchParams: { name?: string }
+  searchParams: { name?: string, u?: string}
 }) {
   const productId = params.id
   const productName = searchParams.name || "Товар"
+  const email = searchParams.u || ""
 
   return (
     <div className="bg-white min-h-screen">
@@ -34,7 +35,7 @@ export default function ProductReviewPage({
         </div>
 
         <Suspense fallback={<div className="h-96 bg-gray-100 rounded-lg animate-pulse"></div>}>
-          <ProductReviewForm productId={productId} productName={productName} />
+          <ProductReviewForm productId={productId} productName={productName} userEmail={email}/>
         </Suspense>
       </div>
     </div>

@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     return
   }
 
-  const user = await fetchUserById(params.id)
+  const user = await fetchUserById({ userId: params.id })
 
   const usersOrders = await fetchUsersOrdersById(params.id)
 

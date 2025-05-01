@@ -9,6 +9,8 @@ import { revalidatePath } from "next/cache";
 import moment from "moment";
 import clearCache from "./cache";
 import { generateLongPassword } from "../utils";
+import axios from "axios";
+import { Store } from "@/constants/store";
 
 interface CreateOrderParams {
   products: {
@@ -30,6 +32,12 @@ interface CreateOrderParams {
   discount: number | undefined,
   promocode: string | undefined,
   promoResult: string | undefined;
+  cityRef: string,
+  warehouseRef: string | undefined,
+  warehouseIndex: string | undefined,
+  streetRef: string | undefined,
+  buildingNumber: string | undefined,
+  apartment: string | undefined
 }
 
 interface Product {
@@ -142,7 +150,13 @@ export async function createOrder(params: CreateOrderParams, type?: "json") {
           paymentStatus: "Pending",
           deliveryStatus: "Proceeding",
           discount: params.discount,
-          promocode: params.promocode
+          promocode: params.promocode,
+          buildingNumber: params.buildingNumber,
+          apartment: params.apartment,
+          cityRef: params.cityRef,
+          warehouseRef: params.warehouseRef,
+          warehouseIndex: params.warehouseIndex,
+          streetRef: params.streetRef
       });
 
       user.orders.push({
@@ -2860,4 +2874,83 @@ export async function findNewCustomers(from: Date | undefined, to: Date | undefi
   } catch (error: any) {
     throw new Error(`Error finding new customers: ${error.message}`);
   }
+}
+
+export async function generateInvoice(orderId: string) {
+  const order = await Order.findById(orderId);
+  if (!order) throw new Error("Order not found");
+
+  const {
+    deliveryMethod,
+    cityRef,
+    warehouseRef,
+    warehouseIndex,
+    streetRef,
+    value,
+    name,
+    surname,
+    phoneNumber,
+  } = order;
+
+  const baseFields = {
+    apiKey: process.env.NOVA_API_KEY,
+    modelName: "InternetDocument",
+    calledMethod: "save",
+    methodProperties: {
+      PayerType: order.value >= Store.freeDelivery ? "Sender" : "Recipient",
+      PaymentMethod: "Card",
+      CargoType: "Cargo",
+      Weight: "2",
+      ServiceType: "",
+      SeatsAmount: "1",
+      Description: "Товар з інтернет-магазину",
+      Cost: value.toString(),
+      CitySender: process.env.NOVA_SENDER_CITY_REF,
+      Sender: process.env.NOVA_SENDER_REF,
+      SenderAddress: process.env.NOVA_SENDER_ADDRESS_REF,
+      ContactSender: process.env.NOVA_SENDER_CONTACT_REF,
+      SendersPhone: process.env.NOVA_SENDER_PHONE,
+      CityRecipient: cityRef,
+      RecipientsPhone: phoneNumber,
+      ContactRecipient: `${name} ${surname}`,
+      Dimensions: {
+        Length: "20",
+        Width: "20",
+        Height: "20",
+      },
+      BackwardDeliveryData: [
+        {
+          PayerType: "Recipient",
+          CargoType: "Money",
+          RedeliveryString: value.toString(),
+        },
+      ],
+    },
+  };
+
+  // Set ServiceType and RecipientAddress depending on deliveryMethod
+  if (deliveryMethod === "Нова пошта (У відділення)") {
+    baseFields.methodProperties.ServiceType = "WarehouseWarehouse";
+    (baseFields.methodProperties as any).RecipientAddress = warehouseRef;
+  } else if (deliveryMethod === "Нова пошта (Поштомат)t") {
+    baseFields.methodProperties.ServiceType = "WarehousePostomat";
+    (baseFields.methodProperties as any).RecipientAddress = warehouseRef;
+  } else if (deliveryMethod === "Нова пошта (До дому)") {
+    baseFields.methodProperties.ServiceType = "DoorsWarehouse";
+    (baseFields.methodProperties as any).StreetRecipient = streetRef;
+    // you can add BuildingNumber, Flat if you support those fields
+  } else {
+    throw new Error("Invalid delivery method");
+  }
+
+  const response = await axios.post("https://api.novaposhta.ua/v2.0/json/", baseFields);
+  const { data } = response.data;
+
+  if (!data || !data[0]) throw new Error("Failed to create invoice");
+
+  // Save invoice JSON to order
+  order.invoice = JSON.stringify(data[0]);
+  await order.save();
+
+  return data[0];
 }

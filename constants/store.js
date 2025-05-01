@@ -10,12 +10,15 @@ export const Store = {
     "checkout_page": 0
   },
   "phoneNumber": "",
-  "email": "coppergroupstudio@gmail.com",
+  "email": "contact@bytecraftua.com",
   "freeDelivery": 3000,
   "social_media": {
     "instagram": "",
     "tik_tok": "",
     "facebook": ""
   },
-  "catalog_link": "/catalog?page=1&sort=default"
+  "catalog_link": "/catalog?page=1&sort=default",
+  "additional_emails": {
+    "thank_you": "thankyou@bytecraftua.com"
+  }
 };

@@ -3,8 +3,9 @@
 import { changePaymentStatus, changedeliveryStatus } from "@/lib/actions/order.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { usePathname } from "next/navigation";
+import { sendAskForReviewEmail } from "@/lib/email/ask-for-review";
 
-const ChangeOrdersStatuses = ({ id, paymentStatus, deliveryStatus }: { id: string, paymentStatus: string, deliveryStatus: string}) => {
+const ChangeOrdersStatuses = ({ _id, id, paymentStatus, deliveryStatus }: { _id: string, id: string, paymentStatus: string, deliveryStatus: string}) => {
   const pathname = usePathname();
 
   const handlePaymentStatusChange = async (id: string, value: string) => {
@@ -13,6 +14,10 @@ const ChangeOrdersStatuses = ({ id, paymentStatus, deliveryStatus }: { id: strin
 
   const handleDeliveryStatusChange = async (id: string, value: string) => {
     await changedeliveryStatus(id, value, pathname)
+
+    if(value === "Fulfilled") {
+      await sendAskForReviewEmail(_id)
+    }
   }
 
   const getStatusColor = (status: string) => {

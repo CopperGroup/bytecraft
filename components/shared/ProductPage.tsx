@@ -103,7 +103,7 @@ const ProductReviews = ({
         </div>
         <div className="mt-4 sm:mt-6">
           <a
-            href={`/product/${productId}/review?name=${encodeURIComponent(productName)}`}
+            href={`/catalog/${productId}/review?name=${encodeURIComponent(productName)}`}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Написати відгук про ${productName}`}
@@ -228,7 +228,7 @@ const NoReviews = ({ productId, productName }: { productId: string; productName:
     <h3 className="text-xl sm:text-2xl font-semibold mb-2">Ще немає відгуків</h3>
     <p className="text-gray-500 mb-6 sm:mb-8 px-4">Будьте першим, хто залишить відгук про цей товар</p>
     <a
-      href={`/product/${productId}/review?name=${encodeURIComponent(productName)}`}
+      href={`/catalog/${productId}/review?name=${encodeURIComponent(productName)}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Написати перший відгук про ${productName}`}
@@ -260,7 +260,7 @@ const ProductFAQ = ({ product, pretifiedName }: { product: Product; pretifiedNam
     },
     {
       question: `Чи доступна безкоштовна доставка для ${pretifiedName}?`,
-      answer: `Так, безкоштовна доставка доступна при замовленні від ${Store.currency_sign}{Store.freeDelivery}.`,
+      answer: `Так, безкоштовна доставка доступна при замовленні від ${Store.currency_sign}${Store.freeDelivery}.`,
     },
   ]
 
@@ -654,7 +654,7 @@ export default function ProductPage({
                         {Store.currency_sign}
                         {product.price}
                       </span>
-                      <Badge className="bg-gray-100 text-gray-900 border-0 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium">
+                      <Badge className="bg-gray-100 text-gray-900 border-0 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-medium hover:bg-red-500 hover:text-white">
                         Економія {discountPercentage}%
                       </Badge>
                     </>
@@ -678,16 +678,16 @@ export default function ProductPage({
                   id={product._id}
                   name={product.name}
                   image={product.images[0]}
-                  price={product.price}
-                  priceWithoutDiscount={product.priceToShow}
+                  price={product.priceToShow}
+                  priceWithoutDiscount={product.price}
                   className="w-full py-3 sm:py-4 text-sm sm:text-base font-medium rounded-full"
                 />
                 <AddToCart
                   id={product._id}
                   name={product.name}
                   image={product.images[0]}
-                  price={product.price}
-                  priceWithoutDiscount={product.priceToShow}
+                  price={product.priceToShow}
+                  priceWithoutDiscount={product.price}
                   variant="full"
                   className="w-full py-3 sm:py-4 text-sm sm:text-base font-medium rounded-full"
                 />

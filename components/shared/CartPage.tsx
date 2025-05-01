@@ -81,7 +81,7 @@ const CartPage = ({ setIsOpened }: { setIsOpened: (value: boolean) => void }) =>
       <div className="flex-grow overflow-auto p-6">
         <div className="mb-6">
           {cartData.length > 0 && (
-            <FreeDeliveryProgress currentAmount={Number.parseFloat(totalPrice)} threshold={1000} />
+            <FreeDeliveryProgress currentAmount={Number.parseFloat(totalPrice)} threshold={Store.freeDelivery} />
           )}
         </div>
         {cartData.length === 0 ? (

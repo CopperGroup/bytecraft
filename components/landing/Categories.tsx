@@ -6,9 +6,9 @@ import Link from "next/link"
 import Image from "next/image"
 
 const categories = [
-  { name: "Смартфони", image: "/assets/1.jpg", href: "/catalog" },
-  { name: "Ноутбуки", image: "/assets/2.jpg", href: "/catalog" },
-  { name: "Аксесуари", image: "/assets/3.jpg", href: "/catalog" },
+  { name: "Клавіатури", image: "/assets/1.jpg", href: "/catalog?page=1&sort=default&categories=6812770585ec2691c2d073dd%2C6812770585ec2691c2d073e3%2C6812770585ec2691c2d073e9%2C6812770585ec2691c2d073e6%2C6812770585ec2691c2d073ec%2C6812770585ec2691c2d073ef%2C6812770585ec2691c2d073f2%2C6812770585ec2691c2d073fb%2C6812770585ec2691c2d07401" },
+  { name: "Навушники", image: "/assets/2.jpg", href: "/catalog?page=1&sort=default&categories=6812770485ec2691c2d073d7%2C6812770585ec2691c2d073e0" },
+  { name: "Мишки", image: "/assets/3.jpg", href: "/catalog?page=1&sort=default&categories=6812770485ec2691c2d073d4%2C6812770585ec2691c2d073f5%2C6812770585ec2691c2d073f8%2C6812770585ec2691c2d073fe" },
 ]
 
 export default function Categories() {

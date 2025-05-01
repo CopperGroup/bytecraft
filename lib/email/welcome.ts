@@ -3,6 +3,7 @@
 import { Store } from '@/constants/store';
 import nodemailer from 'nodemailer';
 import { getTop3ProductsBySales } from '../actions/product.actions';
+import { year_and_rights } from '@/constants/emails';
 
 export async function sendWelcomeEmail(toEmail: string, promoCode: string) {
     const transporter = nodemailer.createTransport({
@@ -228,9 +229,7 @@ export async function sendWelcomeEmail(toEmail: string, promoCode: string) {
                                         <a href="${Store.domain}/support" target="_blank" style="color: #4b5563; text-decoration: underline;">Підтримка</a> | 
                                         <a href="${Store.domain}/faq" target="_blank" style="color: #4b5563; text-decoration: underline;">FAQ</a>
                                     </p>
-                                    <p style="color: #6b7280; font-size: 12px; margin: 0;">
-                                        © ${new Date().getFullYear()} ${Store.name}. Усі права захищені.
-                                    </p>
+                                    ${year_and_rights}
                                     </td>
                                     <td align="right">
                                     <table border="0" cellpadding="0" cellspacing="0">

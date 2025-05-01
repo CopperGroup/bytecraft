@@ -8,6 +8,7 @@ import { generateLongPassword } from "../utils";
 import { redirect } from "next/navigation";
 import { hasPermission } from "../roles";
 import bcrypt from "bcryptjs";
+import { generatePromoCode } from "./promocode.actions";
 
 type CreateUserParams = {
     username: string, 
@@ -178,16 +179,23 @@ export async function checkForAdmin(email: string){
     }
 }
 
-export async function fetchUserById(userId: string) {
-    try {
-        connectToDB()
+export async function fetchUserById({ userId }: { userId: string }): Promise<UserType>;
+export async function fetchUserById({ userId }: { userId: string }, type: 'json'): Promise<string>;
 
-        const currentUser = User.findById(userId);
+export async function fetchUserById({ userId }: { userId: string }, type?: 'json') {
+   try {
 
-        return currentUser;
-    } catch (error: any) {
-        throw new Error(`Error fetching user by id, ${error.message}`)
+    await connectToDB()
+    const currentUser = await User.findById(userId).select("-password");
+      
+    if(type === 'json'){
+      return JSON.stringify(currentUser)
+    } else {
+      return currentUser
     }
+   } catch (error: any) {
+     throw new Error(`Error fetching user by id: ${error.message}`)
+   }
 }
 
 export async function fetchUsers(type?: "json") {
@@ -254,4 +262,24 @@ export async function resetPassword({
     } catch (error: any) {
         throw new Error(`Error reseting password: ${error.message}`)
     }
+}
+
+export async function addPromo(params: { userId: string, email: string }): Promise<string> {
+    
+  try {
+    await connectToDB()
+    
+    const promoCode = await generatePromoCode({ email: params.email, validityDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10).replace(/-/g, ""), reusabilityTimes: 1, discountPercentage: 5 })
+
+    const user = await User.findByIdAndUpdate(
+        params.userId,
+        {
+            $push: { discounts: promoCode }
+        }
+    )
+
+    return promoCode
+  } catch (error: any) {
+    throw new Error(`Error adding promo to user: ${error.message}`)
+  }
 }

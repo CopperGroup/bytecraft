@@ -23,7 +23,7 @@ export default function BannerHero() {
               <span className="text-gray-300">Гаджети</span>
             </h1>
             <p className="text-base sm:text-lg text-gray-300 max-w-xl">
-              Відкрийте для себе колекцію сучасних технологій та інновацій для повсякденного життя.
+              Прокачай свою гру з епічною зброєю — від ультраточної периферії до геймерських аксесуарів нового покоління.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <CatalogLinkButton link="/catalog?page=1&sort=default">
@@ -69,7 +69,7 @@ export default function BannerHero() {
                 />
               </div>
               <p className="text-xs sm:text-sm text-gray-300">
-                <span className="text-white font-medium">1000+</span> задоволених клієнтів цього місяця
+                <span className="text-white font-medium">10000+</span> задоволених клієнтів цього місяця
               </p>
             </div>
           </div>

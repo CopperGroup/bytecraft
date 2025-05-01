@@ -321,4 +321,8 @@ export async function sendOrderEmail(orderId: string) {
   };
 
   await transporter.sendMail(mailOptions);
+
+  order.emails.confirmation = true
+
+  await order.save()
 }

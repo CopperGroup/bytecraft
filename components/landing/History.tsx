@@ -6,11 +6,11 @@ import Image from "next/image"
 import { Store } from "@/constants/store"
 
 const milestones = [
-  { year: 2015, event: `Заснування ${Store.name}` },
-  { year: 2017, event: "Запуск Інтернет-магазину" },
-  { year: 2019, event: "Відкриття першого фізичного магазину" },
-  { year: 2021, event: "Центр інновацій для розумних будинків" },
-  { year: 2023, event: "Вихід на міжнародний ринок" },
+  { year: 2024, month: 'Червень', event: `Заснування ${Store.name} — Створення магазину для геймерів` },
+  { year: 2024, month: 'Серпень', event: "Запуск онлайн-магазину для геймерської спільноти" },
+  { year: 2024, month: 'Жовтень', event: "Розширення асортименту — нові топові пристрої для геймерів" },
+  { year: 2025, month: 'Січень', event: "Партнерство з провідними брендами у світі геймерських технологій" },
+  { year: 2025, month: 'Квітень', event: "Досягнення нових вершин — понад 10000 задоволених геймерів по всій Україні" },
 ]
 
 export default function History() {
@@ -32,9 +32,9 @@ export default function History() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h2 className="text-4xl font-semibold text-gray-900 mb-4 tracking-tight">Наш Шлях Інновацій</h2>
+          <h2 className="text-4xl font-semibold text-gray-900 mb-4 tracking-tight">Наш Шлях до Геймерського Лідерства</h2>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Шлях розвитку та інновацій, який привів нас до лідерства на ринку технологій
+            Від створення онлайн-магазину до топового вибору для геймерів по всій Україні
           </p>
         </motion.div>
 
@@ -82,9 +82,9 @@ export default function History() {
               />
             </div>
             <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur-md rounded-xl shadow-lg">
-              <p className="text-lg font-medium text-gray-900">Від стартапу до лідера ринку технологій</p>
+              <p className="text-lg font-medium text-gray-900">Від стартапу до лідера України</p>
               <p className="text-base text-gray-500 mt-2">
-                Наша місія — зробити інноваційні технології доступними для кожного
+              Наша місія — зробити найкращі геймерські пристрої звичкою для кожного
               </p>
             </div>
           </motion.div>

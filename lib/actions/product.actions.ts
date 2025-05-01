@@ -12,6 +12,7 @@ import { createNewCategory, updateCategories } from "./categories.actions";
 import Category from "../models/category.model";
 import { startSession } from "mongoose";
 import { pretifyProductName } from "../utils";
+import { addPromo } from "./user.actions";
 
 interface CreateParams {
     _id?: string,
@@ -726,3 +727,39 @@ export async function getTop3ProductsBySales() {
     throw new Error(`Failed to fetch top products: ${error.message}`);
   }
 }
+
+export async function leaveReview(params: { productId: string, userId: string | undefined, name: string, email: string, text: string, rating: number, attachmentsUrls: string[] }) {
+  try {
+
+    await connectToDB();
+
+    const date = new Date()
+
+    const formattedDate = new Intl.DateTimeFormat("uk-UA", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(date)
+
+    const product = await Product.findByIdAndUpdate(
+      params.productId,
+      {
+        $push: { reviews: { user: params.name, rating: params.rating, text: params.text, attachmentsUrls: params.attachmentsUrls, time: formattedDate }}
+      }
+    )
+
+    let promo = ""
+
+    if(params.userId) {
+      promo = await addPromo({ userId: params.userId, email: params.email })
+    }
+
+    await clearCatalogCache();
+
+    await clearCache("updateProduct", params.productId)
+    return promo
+  } catch (error: any) {
+    throw new Error(`Error adding review to the product: ${error.message}`)
+  }
+}
+
