@@ -22,7 +22,7 @@ import {
 import { useUploadThing } from "@/lib/uploadthing"
 import { useToast } from "@/hooks/use-toast"
 import { fetchUserByEmail } from "@/lib/actions/user.actions"
-import { leaveReview } from "@/lib/actions/product.actions"
+import { getTop3ProductsBySales, leaveReview } from "@/lib/actions/product.actions"
 import { sendThankYouForReviewEmail } from "@/lib/email/thank-you-for-review"
 
 // Loading placeholder for discount offer
@@ -235,7 +235,9 @@ export default function ProductReviewForm({
         // Send thank you email with promo code
         setIsSendingEmail(true)
         try {
-          await sendThankYouForReviewEmail(email, result, productName, userName.split(" ")[0])
+          const topProductsStringified  = await getTop3ProductsBySales("json");
+
+          await sendThankYouForReviewEmail(email, result, productName, userName.split(" ")[0], topProductsStringified)
         } catch (emailError) {
           console.error("Error sending thank you email:", emailError)
           // We don't want to fail the whole submission if just the email fails

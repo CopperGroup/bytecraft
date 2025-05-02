@@ -710,8 +710,13 @@ export async function fetchPurchaseNotificationsInfo(): Promise<{ id: string, na
   }
 }
 
-export async function getTop3ProductsBySales() {
-  try {
+export async function getTop3ProductsBySales(): Promise<ProductType[]>;
+export async function getTop3ProductsBySales(type: 'json'): Promise<string>;
+
+export async function getTop3ProductsBySales(type?: 'json') {
+   try {
+    await connectToDB();
+
     const topProducts = await Product.aggregate([
       {
         $addFields: {
@@ -722,12 +727,15 @@ export async function getTop3ProductsBySales() {
       { $limit: 3 }
     ]);
 
-    return topProducts;
-  } catch (error: any) {
-    throw new Error(`Failed to fetch top products: ${error.message}`);
-  }
+    if(type === 'json'){
+      return JSON.stringify(topProducts)
+    } else {
+      return topProducts
+    }
+   } catch (error: any) {
+     throw new Error(`Error getting top 3 products: ${error.message}`)
+   }
 }
-
 export async function leaveReview(params: { productId: string, userId: string | undefined, name: string, email: string, text: string, rating: number, attachmentsUrls: string[] }) {
   try {
 
