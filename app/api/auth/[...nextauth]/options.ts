@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
+import { Store } from "@/constants/store";
 
 export const options: NextAuthOptions = {
   providers: [
@@ -71,7 +72,7 @@ export const options: NextAuthOptions = {
           const userExists = await User.findOne({ email });
           
           if (!userExists) {
-            const res = await fetch("http://localhost:3000/api/users/", {
+            const res = await fetch(`${Store.domain}/api/users/`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

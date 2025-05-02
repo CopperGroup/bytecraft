@@ -2,7 +2,7 @@ export const Store = {
   "name": "ByteCraft",
   "currency": "UAH",
   "currency_sign": "₴",
-  "domain": "bytecraftua.com ",
+  "domain": "https://bytecraftua.com ",
   "database": "ByteCraftPeripherals_2025_03_16",
   "default_image": {
     "product_card": 0,
