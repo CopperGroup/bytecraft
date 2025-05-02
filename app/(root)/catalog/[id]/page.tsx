@@ -115,7 +115,7 @@ async function generateProductStructuredData(productId: string) {
     offers: {
       "@type": "Offer",
       url: canonicalUrl,
-      price: product.priceToShow,
+      price: product.priceToShow.toFixed(2).replace("₴", ""),
       priceCurrency: "UAH",
       priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0],
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",

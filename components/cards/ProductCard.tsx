@@ -132,8 +132,7 @@ const ProductCard = ({
           <div className="mt-4 flex items-baseline h-7">
             {price !== priceToShow && (
               <span className="text-sm text-gray-500 line-through mr-2">
-                {Store.currency_sign}
-                {price}
+                {price.toFixed(2)}
               </span>
             )}
             <span
@@ -144,8 +143,7 @@ const ProductCard = ({
             >
               <meta itemProp="priceCurrency" content="UAH" />
               <span itemProp="price">
-                {Store.currency_sign}
-                {priceToShow}
+                {priceToShow.toFixed(2)}
               </span>
               <link itemProp="availability" href="https://schema.org/InStock" />
             </span>
