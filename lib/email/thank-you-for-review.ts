@@ -15,9 +15,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendThankYouForReviewEmail(toEmail: string, promoCode: string, productName: string, name: string) {
+export async function sendThankYouForReviewEmail(toEmail: string, promoCode: string, productName: string, name: string, topProductsStringified: string) {
 
-  const topProducts = await getTop3ProductsBySales();
+  const topProducts = JSON.parse(topProductsStringified)
 
   const emailHtml = `
   <!DOCTYPE html>
