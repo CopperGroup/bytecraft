@@ -1,75 +1,49 @@
 import { Store } from "@/constants/store";
 
-  
-  // Generate an optimized meta description (50-160 characters)
 export function generateMetaDescription(
     productName: string,
     description: string,
     params: Array<{ name: string; value: string }>,
     storeName: string,
   ): string {
-    // Extract key features (up to 2)
+    // Extract key product features
     const keyFeatures = params
-      .filter((param) => ["Особливості", "Тип", "Бренд"].includes(param.name))
-      .slice(0, 2)
-      .map((param) => param.value)
+      .filter((param) => ["Процесор", "Пам'ять", "Екран", "Камера"].includes(param.name))
+      .map((param) => `${param.name}: ${param.value.replaceAll("_", " ")}`)
       .join(", ")
   
-    // Create a concise description
-    const baseDesc = `Купуйте ${simplifyProductName(productName)} з доставкою від ${storeName}.`
-    const featuresDesc = keyFeatures ? ` ${keyFeatures}.` : ""
-  
-    // Combine and ensure within 160 characters
-    let finalDesc = `${baseDesc}${featuresDesc}`
-    if (finalDesc.length > 160) {
-      finalDesc = finalDesc.substring(0, 157) + "..."
-    }
-  
-    return finalDesc
+    // Create optimized meta description
+    return keyFeatures
+      ? `${productName} - ${keyFeatures}. Купуйте з гарантією та безкоштовною доставкою від ${storeName}.`
+      : `${productName} - Купуйте з гарантією та безкоштовною доставкою від ${storeName}. ${description.slice(0, 120).replace(/<\/?[^>]+(>|$)/g, "")}`
   }
   
-  // Generate relevant keywords
+  /**
+   * Generates SEO-friendly title for product pages
+   */
+  export function generateSeoTitle(productName: string, storeName: string, price: number, currency: string): string {
+    return `${productName} | Купити в ${storeName} | Ціна ${price} ${currency}`
+  }
+  
+  /**
+   * Generates keywords for product pages
+   */
   export function generateKeywords(
     productName: string,
     categoryName: string,
     params: Array<{ name: string; value: string }>,
   ): string {
-    // Extract brand
-    const brand = params.find((param) => param.name === "Бренд")?.value || ""
-  
-    // Extract key product attributes
-    const type = params.find((param) => param.name === "Тип")?.value || ""
-    const color = params.find((param) => param.name === "Колір")?.value || ""
-  
-    // Create base keywords
-    const baseKeywords = [simplifyProductName(productName), brand, type, color, categoryName, "купити", "ціна", "Україна"]
-  
-    // Filter out empty values and join
-    return baseKeywords.filter(Boolean).join(", ")
+    const paramValues = params.map((p) => p.value).join(", ")
+    return `${productName}, ${categoryName}, ${paramValues}, купити, ціна`
   }
   
-  // Helper to simplify product names by removing excessive details
-  export function simplifyProductName(productName: string): string {
-    // Remove excessive specifications and details
-    let simplified = productName
-      .replace(/\d+(\.\d+)?(G|GB|TB|MHz|GHz)/gi, "") // Remove memory/frequency specs
-      .replace(/\d+x\d+/g, "") // Remove dimensions
-      .replace(/\d+ ?DPI/gi, "") // Remove DPI values
-      .replace(/\s{2,}/g, " ") // Remove extra spaces
-      .trim()
-  
-    // If still too long, truncate
-    if (simplified.length > 50) {
-      simplified = simplified.substring(0, 47) + "..."
-    }
-  
-    return simplified
-  }
-  
-  // Strip HTML tags from text
+  /**
+   * Extracts clean text from HTML content
+   */
   export function stripHtml(html: string): string {
-    return html?.replace(/<[^>]*>?/gm, "") || ""
+    return html.replace(/<\/?[^>]+(>|$)/g, "")
   }
+  
   /**
    * Generates structured data for product FAQs
    */
