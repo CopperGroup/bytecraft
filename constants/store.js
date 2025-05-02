@@ -9,7 +9,7 @@ export const Store = {
     "product_page": 0,
     "checkout_page": 0
   },
-  "phoneNumber": "",
+  "phoneNumber": "+380 97 737 74 85",
   "email": "contact@bytecraftua.com",
   "freeDelivery": 3000,
   "social_media": {
