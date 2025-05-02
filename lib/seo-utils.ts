@@ -1,47 +1,75 @@
+import { Store } from "@/constants/store";
+
+  
+  // Generate an optimized meta description (50-160 characters)
 export function generateMetaDescription(
     productName: string,
     description: string,
     params: Array<{ name: string; value: string }>,
     storeName: string,
   ): string {
-    // Extract key product features
+    // Extract key features (up to 2)
     const keyFeatures = params
-      .filter((param) => ["Процесор", "Пам'ять", "Екран", "Камера"].includes(param.name))
-      .map((param) => `${param.name}: ${param.value.replaceAll("_", " ")}`)
+      .filter((param) => ["Особливості", "Тип", "Бренд"].includes(param.name))
+      .slice(0, 2)
+      .map((param) => param.value)
       .join(", ")
   
-    // Create optimized meta description
-    return keyFeatures
-      ? `${productName} - ${keyFeatures}. Купуйте з гарантією та безкоштовною доставкою від ${storeName}.`
-      : `${productName} - Купуйте з гарантією та безкоштовною доставкою від ${storeName}. ${description.slice(0, 120).replace(/<\/?[^>]+(>|$)/g, "")}`
+    // Create a concise description
+    const baseDesc = `Купуйте ${simplifyProductName(productName)} з доставкою від ${storeName}.`
+    const featuresDesc = keyFeatures ? ` ${keyFeatures}.` : ""
+  
+    // Combine and ensure within 160 characters
+    let finalDesc = `${baseDesc}${featuresDesc}`
+    if (finalDesc.length > 160) {
+      finalDesc = finalDesc.substring(0, 157) + "..."
+    }
+  
+    return finalDesc
   }
   
-  /**
-   * Generates SEO-friendly title for product pages
-   */
-  export function generateSeoTitle(productName: string, storeName: string, price: number, currency: string): string {
-    return `${productName} | Купити в ${storeName} | Ціна ${price} ${currency}`
-  }
-  
-  /**
-   * Generates keywords for product pages
-   */
+  // Generate relevant keywords
   export function generateKeywords(
     productName: string,
     categoryName: string,
     params: Array<{ name: string; value: string }>,
   ): string {
-    const paramValues = params.map((p) => p.value).join(", ")
-    return `${productName}, ${categoryName}, ${paramValues}, купити, ціна`
+    // Extract brand
+    const brand = params.find((param) => param.name === "Бренд")?.value || ""
+  
+    // Extract key product attributes
+    const type = params.find((param) => param.name === "Тип")?.value || ""
+    const color = params.find((param) => param.name === "Колір")?.value || ""
+  
+    // Create base keywords
+    const baseKeywords = [simplifyProductName(productName), brand, type, color, categoryName, "купити", "ціна", "Україна"]
+  
+    // Filter out empty values and join
+    return baseKeywords.filter(Boolean).join(", ")
   }
   
-  /**
-   * Extracts clean text from HTML content
-   */
+  // Helper to simplify product names by removing excessive details
+  export function simplifyProductName(productName: string): string {
+    // Remove excessive specifications and details
+    let simplified = productName
+      .replace(/\d+(\.\d+)?(G|GB|TB|MHz|GHz)/gi, "") // Remove memory/frequency specs
+      .replace(/\d+x\d+/g, "") // Remove dimensions
+      .replace(/\d+ ?DPI/gi, "") // Remove DPI values
+      .replace(/\s{2,}/g, " ") // Remove extra spaces
+      .trim()
+  
+    // If still too long, truncate
+    if (simplified.length > 50) {
+      simplified = simplified.substring(0, 47) + "..."
+    }
+  
+    return simplified
+  }
+  
+  // Strip HTML tags from text
   export function stripHtml(html: string): string {
-    return html.replace(/<\/?[^>]+(>|$)/g, "")
+    return html?.replace(/<[^>]*>?/gm, "") || ""
   }
-  
   /**
    * Generates structured data for product FAQs
    */
@@ -64,7 +92,7 @@ export function generateMetaDescription(
       },
       {
         question: `Чи доступна безкоштовна доставка для ${productName}?`,
-        answer: `Так, безкоштовна доставка доступна при замовленні від ${currencySign}1000.`,
+        answer: `Так, безкоштовна доставка доступна при замовленні від ${currencySign}${Store.freeDelivery}.`,
       },
     ]
   }

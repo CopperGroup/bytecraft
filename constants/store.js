@@ -2,7 +2,7 @@ export const Store = {
   "name": "ByteCraft",
   "currency": "UAH",
   "currency_sign": "₴",
-  "domain": "https://bytecraft-store.vercel.app",
+  "domain": "bytecraftua.com ",
   "database": "ByteCraftPeripherals_2025_03_16",
   "default_image": {
     "product_card": 0,
@@ -13,7 +13,7 @@ export const Store = {
   "email": "contact@bytecraftua.com",
   "freeDelivery": 3000,
   "social_media": {
-    "instagram": "",
+    "instagram": "https://www.instagram.com/bytecraft.store/",
     "tik_tok": "",
     "facebook": ""
   },
