@@ -8,8 +8,8 @@ export const OrderValidation = z.object({
   paymentType: z.string().min(1, { message: "Виберіть спосіб оплати" }),
   deliveryMethod: z.string().min(1, { message: "Виберіть спосіб доставки" }),
   city: z.string().min(1, { message: "Виберіть місто" }),
-  adress: z.string().min(1, { message: "Виберіть відділення або введіть адресу" }),
-  postalCode: z.string().min(5, { message: "Введіть коректний поштовий код" }),
+  adress: z.string().optional(), // Made optional
+  postalCode: z.string().optional(), // Made optional
   comment: z.string().optional(),
   buildingNumber: z.string().optional(),
   apartment: z.string().optional(),

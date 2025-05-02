@@ -32,7 +32,6 @@ import {
   AlertCircle,
   User,
   Mail,
-  MapPin,
 } from "lucide-react"
 import Confetti from "react-confetti"
 import { trackFacebookEvent } from "@/helpers/pixel"
@@ -54,7 +53,6 @@ import { validatePromoCode } from "@/lib/actions/promocode.actions"
 import { sendOrderEmail } from "@/lib/email/order"
 import { CitySelect } from "@/components/interface/nova/city-select"
 import { WarehouseSelect } from "@/components/interface/nova/warehouse-select"
-import { StreetSelect } from "@/components/interface/nova/street-select"
 
 type CartProduct = {
   id: string
@@ -141,17 +139,12 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
     cityRef: "",
     warehouseRef: "",
     warehouseIndex: "",
-    streetRef: "",
-    buildingNumber: "",
-    apartment: "",
-    postalCode: "",
     name: "",
     surname: "",
     phoneNumber: "",
     paymentType: undefined,
     deliveryMethod: undefined,
     city: "",
-    adress: "",
     comment: "",
   }
 
@@ -160,17 +153,13 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
     defaultValues,
   })
 
-  // Reset address field when delivery method changes
+  // Reset fields when delivery method changes
   useEffect(() => {
     const deliveryMethod = form.watch("deliveryMethod")
     if (deliveryMethod) {
-      // Reset address field when delivery method changes
-      form.setValue("adress", "")
+      // Reset fields when delivery method changes
       form.setValue("warehouseRef", "")
       form.setValue("warehouseIndex", "")
-      form.setValue("streetRef", "")
-      form.setValue("buildingNumber", "")
-      form.setValue("apartment", "")
     }
   }, [form.watch("deliveryMethod"), form])
 
@@ -224,7 +213,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
       }
     } catch (error) {
       console.error("Error applying promocode:", error)
-      setPromoError("Помилка при п��ревірці промокоду. Спробуйте пізніше.")
+      setPromoError("Помилка при перевірці промокоду. Спробуйте пізніше.")
     } finally {
       setIsApplyingPromo(false)
     }
@@ -240,17 +229,6 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
     try {
       setIsSubmitting(true)
 
-      // Format address based on delivery method
-      let formattedAddress = values.adress
-      if (values.deliveryMethod === "Нова пошта (До дому)" && values.buildingNumber) {
-        formattedAddress = `${values.adress}, ${values.buildingNumber}`
-        if (values.apartment) {
-          formattedAddress += `, кв. ${values.apartment}`
-        }
-      }
-      // For warehouse delivery methods, we don't modify the address field
-      // The warehouse reference is already stored in warehouseRef
-
       // Include promocode info in the order if applied
       const orderData = {
         products: products,
@@ -263,8 +241,6 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         paymentType: values.paymentType,
         deliveryMethod: values.deliveryMethod,
         city: values.city,
-        adress: formattedAddress,
-        postalCode: values.postalCode,
         comment: values.comment,
         promocode: appliedPromo ? appliedPromo.code : undefined,
         discount: appliedPromo ? appliedPromo.discount : undefined,
@@ -272,9 +248,11 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         cityRef: values.cityRef,
         warehouseRef: values.warehouseRef,
         warehouseIndex: values.warehouseIndex,
-        streetRef: values.streetRef,
-        buildingNumber: values.buildingNumber,
-        apartment: values.apartment
+        adress: "", 
+        postalCode: "",
+        streetRef: "", 
+        buildingNumber: "E", 
+        apartment: ""
       }
 
       const createdOrder = await createOrder(orderData, "json")
@@ -659,7 +637,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
   const isDeliveryMethodSelected = !!form.watch("deliveryMethod")
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-12 overflow-x-hidden">
+    <div className="w-full max-w-7xl mx-auto px-6 py-12 overflow-x-hidden bg-[#f5f5f7] rounded-3xl">
       {isOrderCreated ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -701,7 +679,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
               translateY: position === "fixed" ? "-50%" : "0%",
             }}
             onAnimationComplete={() => setPosition("relative")}
-            className="bg-[#f5f5f7] rounded-full p-8 mb-8 overflow-hidden"
+            className="bg-white rounded-full p-8 mb-8 overflow-hidden shadow-lg"
           >
             <motion.div
               initial={{ y: -200, rotate: 0 }}
@@ -734,7 +712,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.7 }}
             >
-              Дякуємо за ваше замовлення. Наш менеджер зв&apos;яжеться з вами найближчим часом.
+              Дякуємо за ваше замовлення. Ми вже почали готувати його до відправлення.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
@@ -744,14 +722,17 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
             >
               <Button
                 onClick={() => router.push(`/myOrders/${orderId}`)}
-                className="bg-gray-900 hover:bg-black text-white px-6 py-3 h-auto rounded-full text-base font-medium transition duration-300 w-full sm:w-auto"
+                className="bg-gray-900 hover:bg-black text-white px-6 py-3 h-auto rounded-full text-base font-medium transition duration-300 w-full sm:w-auto shadow-md"
               >
                 {windowSize.width > 380 ? "Переглянути деталі замовлення" : "Переглянути деталі"}
               </Button>
-              <div className="flex flex-1 justify-center items-center text-gray-700 bg-[#f5f5f7] px-4 py-3 rounded-full max-[640px]:w-full">
-                <Phone className="w-5 h-5 mr-2 text-gray-900" />
-                <span className="text-base font-medium">Очікуйте на дзвінок</span>
-              </div>
+              <Button
+                onClick={() => router.push("/")}
+                variant="outline"
+                className="px-6 py-3 h-auto rounded-full text-base font-medium border-gray-300 hover:bg-gray-100 transition duration-300 w-full sm:w-auto"
+              >
+                Повернутися до магазину
+              </Button>
             </motion.div>
             <AnimatePresence>
               {showThankYou && (
@@ -770,15 +751,18 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         </motion.div>
       ) : (
         <>
-          <h1 className="w-full text-4xl font-semibold text-gray-900 mb-10 text-center tracking-tight">
+          <h1 className="w-full text-4xl font-semibold text-gray-900 mb-6 text-center tracking-tight">
             Оформлення замовлення
           </h1>
+          <p className="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
+            Заповніть форму нижче, щоб завершити ваше замовлення. Всі поля, позначені зірочкою (*), є обов&apos;язковими.
+          </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               {/* Promo banner for non-logged in users */}
               {!email && (
-                <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-2xl text-white mb-8 shadow-lg">
+                <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-3xl text-white mb-8 shadow-md">
                   <div className="flex items-start gap-4">
                     <div className="bg-white/20 p-3 rounded-full">
                       <Tag className="h-6 w-6 text-white" />
@@ -790,7 +774,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       </p>
                       <Button
                         onClick={() => setShowAuthModal(true)}
-                        className="bg-white text-gray-900 hover:bg-gray-100 rounded-full"
+                        className="bg-white text-gray-900 hover:bg-gray-100 rounded-full shadow-sm"
                       >
                         Зареєструватися та отримати знижку
                       </Button>
@@ -800,8 +784,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
               )}
 
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
                     <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
                       <User className="w-5 h-5 mr-2 text-gray-900" />
                       Особисті дані
@@ -812,11 +796,11 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium text-gray-700">Ім&apos;я</FormLabel>
+                            <FormLabel className="text-sm font-medium text-gray-700">Ім&apos;я *</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
-                                className="rounded-xl border-gray-200 shadow-sm h-12 px-4 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                                className="rounded-2xl border-gray-200 shadow-sm h-12 px-4 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                                 disabled={isSubmitting}
                               />
                             </FormControl>
@@ -829,11 +813,11 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                         name="surname"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium text-gray-700">Прізвище</FormLabel>
+                            <FormLabel className="text-sm font-medium text-gray-700">Прізвище *</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
-                                className="rounded-xl border-gray-200 shadow-sm h-12 px-4 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                                className="rounded-2xl border-gray-200 shadow-sm h-12 px-4 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                                 disabled={isSubmitting}
                               />
                             </FormControl>
@@ -848,13 +832,13 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                         name="phoneNumber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium text-gray-700">Номер телефону</FormLabel>
+                            <FormLabel className="text-sm font-medium text-gray-700">Номер телефону *</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                 <Input
                                   {...field}
-                                  className="pl-10 rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                                  className="pl-10 rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                                   disabled={isSubmitting}
                                 />
                               </div>
@@ -868,13 +852,13 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium text-gray-700">Email</FormLabel>
+                            <FormLabel className="text-sm font-medium text-gray-700">Email *</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                 <Input
                                   {...field}
-                                  className="pl-10 rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                                  className="pl-10 rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                                   disabled={isSubmitting}
                                 />
                               </div>
@@ -886,7 +870,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     </div>
                   </div>
 
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
+                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
                     <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
                       <Truck className="w-5 h-5 mr-2 text-gray-900" />
                       Доставка
@@ -896,17 +880,16 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       name="deliveryMethod"
                       render={({ field }) => (
                         <FormItem className="mb-6">
-                          <FormLabel className="text-base font-medium text-gray-700">Спосіб доставки</FormLabel>
+                          <FormLabel className="text-sm font-medium text-gray-700">Спосіб доставки *</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                             <FormControl>
-                              <SelectTrigger className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                              <SelectTrigger className="rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50">
                                 <SelectValue placeholder="Виберіть спосіб доставки" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="rounded-xl shadow-lg">
+                            <SelectContent className="rounded-2xl shadow-md">
                               <SelectItem value="Нова пошта (У відділення)">Нова пошта (У відділення)</SelectItem>
                               <SelectItem value="Нова пошта (Поштомат)">Нова пошта (Поштомат)</SelectItem>
-                              <SelectItem value="Нова пошта (До дому)">Нова пошта (Кур&apos;єр)</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage className="text-sm" />
@@ -920,17 +903,15 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       name="city"
                       render={({ field }) => (
                         <FormItem className="mb-6">
-                          <FormLabel className="text-base font-medium text-gray-700">Місто</FormLabel>
+                          <FormLabel className="text-sm font-medium text-gray-700">Місто *</FormLabel>
                           <CitySelect
                             value={field.value}
                             onChange={(value, ref) => {
                               field.onChange(value)
                               form.setValue("cityRef", ref)
                               // Reset warehouse when city changes
-                              form.setValue("adress", "")
                               form.setValue("warehouseRef", "")
                               form.setValue("warehouseIndex", "")
-                              form.setValue("streetRef", "")
                             }}
                             disabled={isSubmitting}
                           />
@@ -939,156 +920,43 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       )}
                     />
 
-                    {/* Conditional fields based on delivery method */}
+                    {/* Warehouse select for Nova Poshta office/poshtomat */}
                     {isDeliveryMethodSelected && (
-                      <>
-                        {form.watch("deliveryMethod") === "Нова пошта (До дому)" ? (
-                          <>
-                            <FormField
-                              control={form.control}
-                              name="adress"
-                              render={({ field }) => (
-                                <FormItem className="mb-6">
-                                  <FormLabel className="text-base font-medium text-gray-700">Вулиця</FormLabel>
-                                  <StreetSelect
-                                    cityRef={form.watch("cityRef")}
-                                    value={field.value}
-                                    onChange={(value, ref) => {
-                                      field.onChange(value)
-                                      form.setValue("streetRef", ref)
-                                    }}
-                                    disabled={isSubmitting || !form.watch("cityRef")}
-                                  />
-                                  <FormMessage className="text-sm" />
-                                </FormItem>
-                              )}
-                            />
-                            <div className="grid grid-cols-2 gap-4 mb-6">
-                              <FormField
-                                control={form.control}
-                                name="buildingNumber"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-base font-medium text-gray-700">Будинок</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
-                                        disabled={isSubmitting}
-                                        placeholder="№ будинку"
-                                      />
-                                    </FormControl>
-                                    <FormMessage className="text-sm" />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name="apartment"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-base font-medium text-gray-700">Квартира</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
-                                        disabled={isSubmitting}
-                                        placeholder="№ квартири"
-                                      />
-                                    </FormControl>
-                                    <FormMessage className="text-sm" />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <FormField
-                              control={form.control}
-                              name="adress"
-                              render={({ field }) => (
-                                <FormItem className="mb-6">
-                                  <FormLabel className="text-base font-medium text-gray-700">Адреса</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
-                                      disabled={isSubmitting}
-                                      placeholder="Введіть адресу"
-                                    />
-                                  </FormControl>
-                                  <FormMessage className="text-sm" />
-                                </FormItem>
-                              )}
-                            />
+                      <FormField
+                        control={form.control}
+                        name="warehouseRef"
+                        render={({ field }) => {
+                          const deliveryMethod = form.watch("deliveryMethod") || ""
+                          const warehouseType = deliveryMethod.includes("Поштомат") ? "Postomat" : "Branch"
 
-                            {/* Warehouse select for Nova Poshta office/poshtomat */}
-                            <FormField
-                              control={form.control}
-                              name="warehouseRef"
-                              render={({ field }) => {
-                                const deliveryMethod = form.watch("deliveryMethod") || ""
-                                const showWarehouseSelect =
-                                  deliveryMethod.includes("відділення") || deliveryMethod.includes("Поштомат")
-                                const warehouseType = deliveryMethod.includes("Поштомат") ? "Postomat" : "Branch"
-
-                                return (
-                                  <FormItem className="mb-6">
-                                    <FormLabel className="text-base font-medium text-gray-700">
-                                      {deliveryMethod.includes("Поштомат") ? "Поштомат" : "Відділення"}
-                                    </FormLabel>
-                                    {showWarehouseSelect ? (
-                                      <WarehouseSelect
-                                        cityRef={form.watch("cityRef")}
-                                        value={field.value}
-                                        onChange={(value, ref, index) => {
-                                          field.onChange(ref)
-                                          form.setValue("warehouseIndex", index)
-                                        }}
-                                        disabled={isSubmitting || !form.watch("cityRef")}
-                                        type={warehouseType}
-                                      />
-                                    ) : null}
-                                    <FormMessage className="text-sm" />
-                                  </FormItem>
-                                )
-                              }}
-                            />
-                          </>
-                        )}
-                      </>
+                          return (
+                            <FormItem className="mb-6">
+                              <FormLabel className="text-sm font-medium text-gray-700">
+                                {deliveryMethod.includes("Поштомат") ? "Поштомат" : "Відділення"} *
+                              </FormLabel>
+                              <WarehouseSelect
+                                cityRef={form.watch("cityRef")}
+                                value={field.value}
+                                onChange={(value, ref, index) => {
+                                  field.onChange(ref)
+                                  if (index) form.setValue("warehouseIndex", index)
+                                }}
+                                disabled={isSubmitting || !form.watch("cityRef")}
+                                type={warehouseType}
+                              />
+                              <FormMessage className="text-sm" />
+                            </FormItem>
+                          )
+                        }}
+                      />
                     )}
 
                     <input type="hidden" {...form.register("cityRef")} />
                     <input type="hidden" {...form.register("warehouseRef")} />
                     <input type="hidden" {...form.register("warehouseIndex")} />
-                    <input type="hidden" {...form.register("streetRef")} />
-
-                    <FormField
-                      control={form.control}
-                      name="postalCode"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium text-gray-700">Поштовий код</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                              <Input
-                                {...field}
-                                className="pl-10 rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50 w-full md:w-[310px]"
-                                disabled={isSubmitting}
-                                placeholder="Введіть поштовий код"
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage className="text-sm" />
-                        </FormItem>
-                      )}
-                    />
                   </div>
 
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
+                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
                     <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
                       <CreditCard className="w-5 h-5 mr-2 text-gray-900" />
                       Оплата
@@ -1098,18 +966,18 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       name="paymentType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium text-gray-700">Спосіб оплати</FormLabel>
+                          <FormLabel className="text-sm font-medium text-gray-700">Спосіб оплати *</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                             disabled={isSubmitting || !isDeliveryMethodSelected}
                           >
                             <FormControl>
-                              <SelectTrigger className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50">
+                              <SelectTrigger className="rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50">
                                 <SelectValue placeholder="Виберіть спосіб оплати" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="rounded-xl shadow-lg">
+                            <SelectContent className="rounded-2xl shadow-md">
                               <SelectItem value="Накладний платіж">Накладний платіж</SelectItem>
                             </SelectContent>
                           </Select>
@@ -1120,7 +988,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                   </div>
 
                   {/* Promocode Section */}
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
+                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
                     <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
                       <Tag className="w-5 h-5 mr-2 text-gray-900" />
                       Промокод
@@ -1128,7 +996,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
                     {appliedPromo ? (
                       <div className="flex flex-col space-y-4">
-                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-200 shadow-sm">
                           <div className="flex items-center">
                             <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
                             <div>
@@ -1159,14 +1027,14 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                             placeholder="Введіть промокод"
                             value={promocode}
                             onChange={(e) => setPromocode(e.target.value)}
-                            className="rounded-xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                            className="rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                             disabled={isApplyingPromo || isSubmitting || !isDeliveryMethodSelected}
                           />
                           <Button
                             type="button"
                             onClick={handleApplyPromocode}
                             disabled={!promocode || isApplyingPromo || isSubmitting || !isDeliveryMethodSelected}
-                            className="bg-gray-900 hover:bg-black text-white rounded-xl"
+                            className="bg-gray-900 hover:bg-black text-white rounded-2xl shadow-sm"
                           >
                             {isApplyingPromo ? (
                               <>
@@ -1195,7 +1063,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     )}
                   </div>
 
-                  <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg">
+                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
                     <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
                       <MessageSquare className="w-5 h-5 mr-2 text-gray-900" />
                       Коментар
@@ -1205,13 +1073,14 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       name="comment"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium text-gray-700">Коментар до замовлення</FormLabel>
+                          <FormLabel className="text-sm font-medium text-gray-700">Коментар до замовлення</FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               rows={4}
-                              className="rounded-xl border-gray-200 shadow-sm transition-all focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50"
+                              className="rounded-2xl border-gray-200 shadow-sm transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
                               disabled={isSubmitting || !isDeliveryMethodSelected}
+                              placeholder="Додаткова інформація щодо замовлення"
                             />
                           </FormControl>
                           <FormMessage className="text-sm" />
@@ -1223,7 +1092,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                   <Button
                     type="submit"
                     disabled={isSubmitting || isOrderCreated || !isDeliveryMethodSelected}
-                    className="w-full md:w-auto bg-gray-900 hover:bg-black text-white px-8 py-3 h-auto rounded-full text-base font-medium transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                    className="w-full md:w-auto bg-gray-900 hover:bg-black text-white px-8 py-3 h-auto rounded-full text-base font-medium transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                   >
                     {isSubmitting ? (
                       <>
@@ -1239,8 +1108,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
             </div>
 
             <div className="lg:sticky lg:top-6 self-start">
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-lg">
-                <div className="p-6 bg-[#f5f5f7]">
+              <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
+                <div className="p-6 bg-[#f8f8fa]">
                   <h2 className="text-xl font-medium flex items-center text-gray-900">
                     <ShoppingCart className="w-5 h-5 mr-2 text-gray-900" />
                     Ваше замовлення
@@ -1252,7 +1121,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       key={index}
                       className="flex items-center mb-4 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0 last:mb-0"
                     >
-                      <div className="min-w-24 w-24 h-24 bg-[#f5f5f7] rounded-xl flex items-center justify-center mr-4">
+                      <div className="min-w-24 w-24 h-24 bg-[#f8f8fa] rounded-2xl flex items-center justify-center mr-4">
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
@@ -1278,7 +1147,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     threshold={Store.freeDelivery}
                   />
                 </div>
-                <div className="p-6 bg-[#f5f5f7]">
+                <div className="p-6 bg-[#f8f8fa]">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-base text-gray-700">Підсумок:</span>
                     <span className="text-base font-medium text-gray-900">
@@ -1310,7 +1179,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 bg-[#f5f5f7] p-6 rounded-2xl shadow-lg">
+              <div className="mt-6 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
                 <h3 className="text-lg font-medium mb-2 flex items-center text-gray-900">
                   <CheckCircle className="w-5 h-5 mr-2 text-gray-900" />
                   Гарантія безпеки
@@ -1342,7 +1211,7 @@ const FreeDeliveryProgress = ({ currentAmount, threshold }: { currentAmount: num
   const remaining = threshold - currentAmount
 
   return (
-    <div className="bg-[#f5f5f7] rounded-xl p-4 mb-4">
+    <div className="bg-[#f8f8fa] rounded-2xl p-4 mb-4">
       <div className="flex justify-between items-center mb-2">
         <span className="text-sm font-medium text-gray-900">Безкоштовна доставка</span>
         <span className="text-sm text-gray-500">

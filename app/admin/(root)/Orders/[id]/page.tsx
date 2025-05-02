@@ -22,7 +22,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     //console.log(order.products);
 
     return (
-        <section className="px-10 py-20 w-full max-[1100px]:pb-5">
+        <section className="w-full">
             <OrderPage orderJson={JSON.stringify(order)}/>
         </section>
     )

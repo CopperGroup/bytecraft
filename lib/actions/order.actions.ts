@@ -11,6 +11,7 @@ import clearCache from "./cache";
 import { generateLongPassword } from "../utils";
 import axios from "axios";
 import { Store } from "@/constants/store";
+import { Console } from "console";
 
 interface CreateOrderParams {
   products: {
@@ -2892,65 +2893,197 @@ export async function generateInvoice(orderId: string) {
     phoneNumber,
   } = order;
 
-  const baseFields = {
-    apiKey: process.env.NOVA_API_KEY,
-    modelName: "InternetDocument",
+  // Step 1: Create the counterparty (recipient)
+  const counterpartyFields = {
+    apiKey: process.env.NOVA_POSHTA_API_KEY,  // Your API Key
+    modelName: "CounterpartyGeneral",
     calledMethod: "save",
     methodProperties: {
-      PayerType: order.value >= Store.freeDelivery ? "Sender" : "Recipient",
-      PaymentMethod: "Card",
-      CargoType: "Cargo",
-      Weight: "2",
-      ServiceType: "",
-      SeatsAmount: "1",
-      Description: "Товар з інтернет-магазину",
-      Cost: value.toString(),
-      CitySender: process.env.NOVA_SENDER_CITY_REF,
-      Sender: process.env.NOVA_SENDER_REF,
-      SenderAddress: process.env.NOVA_SENDER_ADDRESS_REF,
-      ContactSender: process.env.NOVA_SENDER_CONTACT_REF,
-      SendersPhone: process.env.NOVA_SENDER_PHONE,
-      CityRecipient: cityRef,
-      RecipientsPhone: phoneNumber,
-      ContactRecipient: `${name} ${surname}`,
-      Dimensions: {
-        Length: "20",
-        Width: "20",
-        Height: "20",
-      },
-      BackwardDeliveryData: [
-        {
-          PayerType: "Recipient",
-          CargoType: "Money",
-          RedeliveryString: value.toString(),
-        },
-      ],
+      FirstName: name,
+      MiddleName: "",
+      LastName: surname,
+      Phone: phoneNumber.replace("+38", ""),
+      Email: order.email,  // Assuming `email` is stored on the order
+      CounterpartyType: "PrivatePerson",
+      CounterpartyProperty: "Recipient",
     },
   };
 
-  // Set ServiceType and RecipientAddress depending on deliveryMethod
-  if (deliveryMethod === "Нова пошта (У відділення)") {
-    baseFields.methodProperties.ServiceType = "WarehouseWarehouse";
-    (baseFields.methodProperties as any).RecipientAddress = warehouseRef;
-  } else if (deliveryMethod === "Нова пошта (Поштомат)t") {
-    baseFields.methodProperties.ServiceType = "WarehousePostomat";
-    (baseFields.methodProperties as any).RecipientAddress = warehouseRef;
-  } else if (deliveryMethod === "Нова пошта (До дому)") {
-    baseFields.methodProperties.ServiceType = "DoorsWarehouse";
-    (baseFields.methodProperties as any).StreetRecipient = streetRef;
-    // you can add BuildingNumber, Flat if you support those fields
-  } else {
-    throw new Error("Invalid delivery method");
+  const counterpartyResponse = await axios.post("https://api.novaposhta.ua/v2.0/json/", counterpartyFields);
+  console.log(counterpartyResponse)
+  const counterpartyData = counterpartyResponse.data;
+
+  if (!counterpartyData || !counterpartyData.success) throw new Error("Failed to create counterparty");
+
+  // Step 2: Create the contact person for the recipient
+  const contactPersonFields = {
+    apiKey: process.env.NOVA_POSHTA_API_KEY,  // Your API Key
+    modelName: "ContactPersonGeneral",
+    calledMethod: "save",
+    methodProperties: {
+      CounterpartyRef: counterpartyData.data[0].Ref,  // Use the counterparty's reference
+      FirstName: name,
+      LastName: surname,
+      MiddleName: "",  // Assuming this is part of the contact person details
+      Phone: phoneNumber,
+    },
+  };
+
+  const contactPersonResponse = await axios.post("https://api.novaposhta.ua/v2.0/json/", contactPersonFields);
+  console.log(contactPersonResponse.data.data)
+  const contactPersonData = contactPersonResponse.data;
+
+  if (!contactPersonData || !contactPersonData.success) throw new Error("Failed to create contact person");
+
+  function getFormattedDateTime(): string {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = now.getFullYear();
+  
+    return `${day}.${month}.${year}`;
   }
 
+  console.log(JSON.stringify({
+    apiKey: process.env.NOVA_POSHTA_API_KEY,
+    modelName: "InternetDocumentGeneral",
+    calledMethod: "getDocumentPrice",
+    methodProperties: {
+      Weight: "1",  // weight in kg
+      CitySender: process.env.NOVA_SENDER_CITY_REF,
+      CityRecipient: cityRef,
+      ServiceType: "WarehouseWarehouse",  // service type
+      Cost : value.toFixed(2),
+      CargoType : "Cargo",
+      SeatsAmount : "1",
+      RedeliveryCalculate : {
+        CargoType: "Money",
+        Amount: value.toFixed(2)
+      },
+    }
+  }))
+  async function getShipmentCost() {
+    const response = await fetch('https://api.novaposhta.ua/v2.0/json/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        apiKey: process.env.NOVA_POSHTA_API_KEY,
+        modelName: "InternetDocumentGeneral",
+        calledMethod: "getDocumentPrice",
+        methodProperties: {
+          Weight: "1",  // weight in kg
+          CitySender: process.env.NOVA_SENDER_CITY_REF,
+          CityRecipient: cityRef,
+          ServiceType: "WarehouseWarehouse",  // service type
+          Cost : value.toFixed(0),
+          CargoType : "Cargo",
+          SeatsAmount : "1",
+          RedeliveryCalculate : {
+            CargoType: "Money",
+            Amount: value.toFixed(0)
+          },
+        }
+      }),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to fetch shipment cost');
+    }
+  
+    const data = await response.json();
+    console.log(data)
+    return data.data[0].Cost;  // Return the cost from the API response
+  }
+  
+  // Example usage
+  const shipmentCost = await getShipmentCost();
+  
+  console.log(shipmentCost)
+  // Step 3: Now that the counterparty and contact person are created, proceed with the shipment
+  const baseFields = {
+    apiKey: process.env.NOVA_POSHTA_API_KEY,
+    modelName: "InternetDocumentGeneral",
+    calledMethod: "save",
+    methodProperties: {
+      PayerType: "Recipient",  // Sender pays for the shipping
+      PaymentMethod: "Cash",  // Payment method is Cash
+      DateTime: getFormattedDateTime(),  // Add the actual DateTime here
+      CargoType: "Cargo",  // Type of cargo is Cargo
+      Weight: "1",  // Weight of the cargo (adjust if needed)
+      ServiceType: "WarehouseWarehouse",  // Service type for delivery
+      SeatsAmount: "1",  // Number of seats (adjust if needed)
+      Description: `Замовлення з ${Store.name}`,  // Add the description of the shipment
+      Cost: shipmentCost,  // Cost of the shipment
+      CitySender: process.env.NOVA_SENDER_CITY_REF,  // Sender's city reference
+      Sender: process.env.NOVA_SENDER_REF,  // Sender's reference
+      SenderAddress: process.env.NOVA_SENDER_ADDRESS_REF,  // Sender's address reference
+      ContactSender: process.env.NOVA_SENDER_CONTACT_REF,  // Sender's contact reference
+      SendersPhone: process.env.NOVA_SENDER_PHONE,  // Sender's phone number
+      CityRecipient: cityRef,  // Recipient's city reference
+      Recipient: counterpartyData.data[0].Ref,  // Recipient's reference from the counterparty creation
+      RecipientAddress: warehouseRef,  // Recipient's address (or warehouse reference)
+      ContactRecipient: contactPersonData.data[0].Ref,  // Recipient's full name
+      RecipientsPhone: phoneNumber,  // Recipient's phone number
+      NewAddress: "1", 
+      OptionsSeat: [
+        {
+          volumetricVolume: "1",  // Adjust if needed
+          volumetricWidth: "20",  // Adjust if needed
+          volumetricLength: "20",  // Adjust if needed
+          volumetricHeight: "20",  // Adjust if needed
+          weight: "1" 
+        }
+      ],
+      AfterpaymentOnGoodsCost: value.toFixed(0)
+    }
+  };
+
+  // Make the API request to Nova Poshta
   const response = await axios.post("https://api.novaposhta.ua/v2.0/json/", baseFields);
   const { data } = response.data;
 
+  console.log(response)
+  console.log(data);
   if (!data || !data[0]) throw new Error("Failed to create invoice");
 
   // Save invoice JSON to order
   order.invoice = JSON.stringify(data[0]);
   await order.save();
 
-  return data[0];
+  return data[0];  // Return the created invoice data
+}
+
+export async function getInvoiceDetails(documentNumber: string, phone?: string) {
+
+  console.log(documentNumber)
+  const requestData = {
+    apiKey: process.env.NOVA_POSHTA_API_KEY,
+    modelName: "TrackingDocument",
+    calledMethod: "getStatusDocuments",
+    methodProperties: {
+      Documents: [
+        {
+          DocumentNumber: documentNumber,
+          ...(phone && { Phone: phone }) // optionally include Phone if available
+        }
+      ]
+    }
+  }
+
+  try {
+    const response = await axios.post("https://api.novaposhta.ua/v2.0/json/", requestData)
+    const { data, success, errors } = response.data
+
+    console.log(data)
+    if (!success || !data || data.length === 0) {
+      throw new Error(errors?.join(", ") || "Failed to fetch invoice details")
+    }
+
+    return data[0]
+  } catch (error) {
+    console.error("Error fetching invoice details:", error)
+    throw error
+  }
 }
