@@ -10,7 +10,7 @@ import { resetPassword } from "@/lib/actions/user.actions"
 
 export default function NewPasswordPage({ searchParams }: { searchParams: any}) {
   const router = useRouter()
-  const token = searchParams.get("t")
+  const token = searchParams.t
 
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
