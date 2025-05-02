@@ -25,7 +25,7 @@ export async function sendResetPasswordEmail({ email }: { email: string }) {
   
     //   const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/resetPass/${resetToken}`;
   
-      const resetLink = `localhost:3000/newPass?t=${resetToken}`;
+      const resetLink = `${Store.domain}/new-pass?t=${resetToken}`;
 
       const transporter = nodemailer.createTransport({
         host: "smtp-relay.brevo.com",  // Brevo SMTP host
