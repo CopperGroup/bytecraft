@@ -346,7 +346,7 @@ export default function OrderPage({ orderJson }: { orderJson: string }) {
   const handleGenerateInvoice = async () => {
     setIsGeneratingInvoice(true)
     try {
-      const result = await generateInvoice(order.id)
+      const result = await generateInvoice(order._id)
       toast({
         title: "Накладну сформовано",
         description: `Накладну №${result.IntDocNumber} успішно сформовано`,

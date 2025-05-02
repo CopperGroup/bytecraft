@@ -3009,10 +3009,11 @@ export async function generateInvoice(orderId: string) {
     methodProperties: {
       PayerType: "Recipient",  // Sender pays for the shipping
       PaymentMethod: "Cash",  // Payment method is Cash
+      RecipientWarehouseIndex: warehouseIndex,
       DateTime: getFormattedDateTime(),  // Add the actual DateTime here
       CargoType: "Cargo",  // Type of cargo is Cargo
       Weight: "1",  // Weight of the cargo (adjust if needed)
-      ServiceType: "WarehouseWarehouse",  // Service type for delivery
+      ServiceType: order.deliveryMethod === "Нова пошта (Поштомат)" ? "DoorsWarehouse" : "WarehouseWarehouse",  // Service type for delivery
       SeatsAmount: "1",  // Number of seats (adjust if needed)
       Description: `Замовлення з ${Store.name}`,  // Add the description of the shipment
       Cost: shipmentCost,  // Cost of the shipment
