@@ -17,13 +17,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { CategoryType } from "@/lib/types/types"
 import Link from "next/link"
 import ProductImagesCarousel from "../interface/ProductImagesCarousel"
+import ProductVariantSelector from "../interface/ProductVariantSelector"
 
 // Only dynamically import the variant selector which is less critical for initial view
-const ProductVariantSelector = dynamic(() => import("../interface/ProductVariantSelector"), {
-  ssr: false,
-  loading: () => <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>,
-})
-
 type Review = {
   user: string
   rating: number

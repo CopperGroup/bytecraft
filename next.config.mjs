@@ -21,6 +21,10 @@ const nextConfig = {
           port: '',
           pathname: '/**',
         },
+        {
+          protocol: 'https', // Or 'http' if necessary
+          hostname: 'content.rozetka.com.ua', // The domain hosting the images
+        },
       ],
       minimumCacheTTL: 31536000,
       deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
