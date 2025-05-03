@@ -4,7 +4,6 @@ import { fetchProductPageInfo } from "@/lib/actions/cache"
 import { pretifyProductName } from "@/lib/utils"
 import { generateMetaDescription, generateKeywords, stripHtml, generateSeoTitle } from "@/lib/seo-utils"
 import type { Metadata, ResolvingMetadata } from "next"
-import SeasonHitBanner from "@/components/banner/SeasonHitBanner"
 
 // Types for better type safety
 type Props = {
@@ -115,13 +114,44 @@ async function generateProductStructuredData(productId: string) {
     offers: {
       "@type": "Offer",
       url: canonicalUrl,
-      price: product.priceToShow.toFixed(2).replace("₴", ""),
+      price: product.priceToShow,
       priceCurrency: "UAH",
       priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0],
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
         name: Store.name,
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: product.priceToShow >= Store.freeDelivery ? "0" : "50",
+          currency: "UAH",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 3,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 5,
+            unitCode: "DAY",
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "UA",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
       },
     },
   }

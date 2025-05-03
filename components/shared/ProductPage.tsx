@@ -10,7 +10,6 @@ import { CreditCard, Shield, Truck, ChevronRight, Star, ChevronDown, Flame } fro
 import AddToCart from "./AddToCart"
 import ContentView from "../pixel/ContentView"
 import { Store } from "@/constants/store"
-import dynamic from "next/dynamic"
 import { pretifyProductName } from "@/lib/utils"
 import BuyNow from "./BuyNow"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -38,8 +37,8 @@ export type Product = {
   priceToShow: number
   params: Array<{ name: string; value: string }>
   articleNumber?: string
-  reviews?: Review[],
-  isAvailable: boolean,
+  reviews?: Review[]
+  isAvailable: boolean
 }
 
 // Lightweight loading component for reviews
@@ -430,6 +429,37 @@ export default function ProductPage({
               "@type": "Organization",
               name: Store.name,
             },
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingRate: {
+                "@type": "MonetaryAmount",
+                value: product.priceToShow >= Store.freeDelivery ? "0" : "50",
+                currency: "UAH",
+              },
+              deliveryTime: {
+                "@type": "ShippingDeliveryTime",
+                handlingTime: {
+                  "@type": "QuantitativeValue",
+                  minValue: 1,
+                  maxValue: 3,
+                  unitCode: "DAY",
+                },
+                transitTime: {
+                  "@type": "QuantitativeValue",
+                  minValue: 1,
+                  maxValue: 5,
+                  unitCode: "DAY",
+                },
+              },
+            },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "UA",
+              returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+              merchantReturnDays: 14,
+              returnMethod: "https://schema.org/ReturnByMail",
+              returnFees: "https://schema.org/FreeReturn",
+            },
           },
           ...(hasReviews && {
             aggregateRating: {
@@ -628,7 +658,10 @@ export default function ProductPage({
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span itemProp="offers" itemScope itemType="https://schema.org/Offer">
                     <span className="text-2xl sm:text-3xl font-medium text-gray-900">
-                      <span>{Store.currency_sign}</span><span itemProp="price" content={product.priceToShow.toString()}>{product.priceToShow}</span>
+                      <span>{Store.currency_sign}</span>
+                      <span itemProp="price" content={product.priceToShow.toString()}>
+                        {product.priceToShow}
+                      </span>
                     </span>
                     <meta itemProp="priceCurrency" content="UAH" />
                     <link
@@ -657,7 +690,8 @@ export default function ProductPage({
                   )}
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
-                  Включно з ПДВ. Безкоштовна доставка при замовленні від {Store.currency_sign}{Store.freeDelivery}
+                  Включно з ПДВ. Безкоштовна доставка при замовленні від {Store.currency_sign}
+                  {Store.freeDelivery}
                 </p>
               </div>
 
@@ -700,7 +734,8 @@ export default function ProductPage({
                   <div>
                     <p className="font-medium text-sm sm:text-base text-gray-900">Безкоштовна доставка</p>
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Безкоштовна стандартна доставка при замовленні від {Store.currency_sign}{Store.freeDelivery}
+                      Безкоштовна стандартна доставка при замовленні від {Store.currency_sign}
+                      {Store.freeDelivery}
                     </p>
                   </div>
                 </div>
