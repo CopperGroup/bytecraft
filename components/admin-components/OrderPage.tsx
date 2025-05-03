@@ -37,7 +37,7 @@ import ChangeOrdersStatuses from "../interface/ChangeOrdersStatuses"
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSearchParams } from "next/navigation"
-import { generateInvoice, getInvoiceDetails } from "@/lib/actions/order.actions"
+import { calculateDeliveryCost, createCounterParty, createCounterPartyContact, generateInvoice, getInvoiceDetails } from "@/lib/actions/order.actions"
 
 interface Product {
   product: {
@@ -346,7 +346,11 @@ export default function OrderPage({ orderJson }: { orderJson: string }) {
   const handleGenerateInvoice = async () => {
     setIsGeneratingInvoice(true)
     try {
-      const result = await generateInvoice(order._id)
+      const counterPartyRef = await createCounterParty({ stringifiedOrder: orderJson })
+      const counterPartyContact = await createCounterPartyContact({ stringifiedOrder: orderJson, ref: counterPartyRef });
+      const deliveryCost = await calculateDeliveryCost({ stringifiedOrder: orderJson })
+
+      const result = await generateInvoice({ stringifiedOrder: orderJson, counterPartyRef, contactRef: counterPartyContact, deliveryCost })
       toast({
         title: "Накладну сформовано",
         description: `Накладну №${result.IntDocNumber} успішно сформовано`,
