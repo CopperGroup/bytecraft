@@ -248,11 +248,11 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         cityRef: values.cityRef,
         warehouseRef: values.warehouseRef,
         warehouseIndex: values.warehouseIndex,
-        adress: "", 
+        adress: "",
         postalCode: "",
-        streetRef: "", 
-        buildingNumber: "E", 
-        apartment: ""
+        streetRef: "",
+        buildingNumber: "E",
+        apartment: "",
       }
 
       const createdOrder = await createOrder(orderData, "json")
@@ -379,29 +379,31 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
   // Auth modal views
   const renderLoginView = () => (
     <>
-      <DialogHeader>
-        <DialogTitle className="text-xl font-semibold text-center">Увійти до облікового запису</DialogTitle>
-        <DialogDescription className="text-center mt-2">
+      <DialogHeader className="space-y-2 px-1 sm:px-0">
+        <DialogTitle className="text-lg sm:text-xl font-semibold text-center">Увійти до облікового запису</DialogTitle>
+        <DialogDescription className="text-center text-sm sm:text-base">
           Увійдіть, щоб отримати знижку 10% на ваше замовлення
         </DialogDescription>
       </DialogHeader>
 
       {loginError && (
-        <Alert variant="destructive" className="mt-4">
+        <Alert variant="destructive" className="mt-3 text-xs sm:text-sm py-2">
           <AlertDescription>{loginError}</AlertDescription>
         </Alert>
       )}
 
-      <form onSubmit={handleLoginSubmit} className="space-y-4 mt-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <form onSubmit={handleLoginSubmit} className="space-y-3 sm:space-y-4 mt-3">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="email" className="text-xs sm:text-sm">
+            Email
+          </Label>
           <div className="relative">
-            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="email"
               type="email"
               placeholder="ваш@email.com"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={loginForm.email}
               onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
               required
@@ -410,20 +412,22 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Label htmlFor="password">Пароль</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="password" className="text-xs sm:text-sm">
+              Пароль
+            </Label>
             <a href="#" className="text-xs text-gray-500 hover:text-gray-900">
               Забули пароль?
             </a>
           </div>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={loginForm.password}
               onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
               required
@@ -434,12 +438,12 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
         <Button
           type="submit"
-          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2"
+          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2 text-sm"
           disabled={isLoading}
         >
           {isLoading ? (
             <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              <RefreshCw className="mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
               Вхід...
             </>
           ) : (
@@ -448,8 +452,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         </Button>
       </form>
 
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-500">
+      <div className="mt-4 sm:mt-6 text-center">
+        <p className="text-xs sm:text-sm text-gray-500">
           Новенький тут?{" "}
           <button
             type="button"
@@ -466,40 +470,41 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
   const renderRegisterView = () => (
     <>
-      <DialogHeader>
-        <DialogTitle className="text-xl font-semibold text-center">Створити обліковий запис</DialogTitle>
-        <DialogDescription className="text-center mt-2">
-          Зареєструйтеся та отримайте <span className="text-red-600 font-bold text-base">знижку 10%</span> на перше
-          замовлення
+      <DialogHeader className="space-y-2 px-1 sm:px-0">
+        <DialogTitle className="text-lg sm:text-xl font-semibold text-center">Створити обліковий запис</DialogTitle>
+        <DialogDescription className="text-center text-sm sm:text-base">
+          Зареєструйтеся та отримайте <span className="text-red-600 font-bold">знижку 10%</span> на перше замовлення
         </DialogDescription>
       </DialogHeader>
 
       <button
         type="button"
         onClick={() => setAuthView("login")}
-        className="flex items-center text-sm text-gray-500 hover:text-gray-900 mb-4"
+        className="flex items-center text-xs sm:text-sm text-gray-500 hover:text-gray-900 mb-3"
         disabled={isLoading}
       >
-        <ArrowLeft className="mr-1 h-4 w-4" />
+        <ArrowLeft className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
         Вже маєте обліковий запис? Увійти
       </button>
 
       {registerError && (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive" className="mb-3 text-xs sm:text-sm py-2">
           <AlertDescription>{registerError}</AlertDescription>
         </Alert>
       )}
 
-      <form onSubmit={handleRegisterSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Ім&apos;я</Label>
+      <form onSubmit={handleRegisterSubmit} className="space-y-3 sm:space-y-4">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="name" className="text-xs sm:text-sm">
+            Ім&apos;я
+          </Label>
           <div className="relative">
-            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="name"
               type="text"
               placeholder="Ваше ім'я"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={registerForm.name}
               onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
               required
@@ -508,15 +513,17 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="register-email">Email</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="register-email" className="text-xs sm:text-sm">
+            Email
+          </Label>
           <div className="relative">
-            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="register-email"
               type="email"
               placeholder="ваш@email.com"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={registerForm.email}
               onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
               required
@@ -525,15 +532,17 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="phone">Номер телефону</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="phone" className="text-xs sm:text-sm">
+            Номер телефону
+          </Label>
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="phone"
               type="tel"
               placeholder="+380 XX XXX XX XX"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={registerForm.phone}
               onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
               required
@@ -542,15 +551,17 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="register-password">Пароль</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="register-password" className="text-xs sm:text-sm">
+            Пароль
+          </Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
             <Input
               id="register-password"
               type="password"
               placeholder="••••••••"
-              className="pl-10 rounded-xl"
+              className="pl-8 sm:pl-10 rounded-xl h-10 text-sm"
               value={registerForm.password}
               onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
               required
@@ -561,12 +572,12 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
         <Button
           type="submit"
-          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2"
+          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2 text-sm"
           disabled={isLoading}
         >
           {isLoading ? (
             <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              <RefreshCw className="mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
               Реєстрація...
             </>
           ) : (
@@ -579,20 +590,20 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
   const renderSuccessView = () => (
     <>
-      <DialogHeader>
-        <DialogTitle className="text-xl font-semibold text-center">Реєстрація успішна!</DialogTitle>
+      <DialogHeader className="space-y-1 sm:space-y-2 px-1 sm:px-0">
+        <DialogTitle className="text-lg sm:text-xl font-semibold text-center">Реєстрація успішна!</DialogTitle>
       </DialogHeader>
 
-      <div className="flex flex-col items-center justify-center py-6">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <CheckCircle className="h-8 w-8 text-green-600" />
+      <div className="flex flex-col items-center justify-center py-4 sm:py-6">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+          <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
         </div>
-        <p className="text-center text-gray-700 mb-6">
+        <p className="text-center text-sm sm:text-base text-gray-700 mb-4 sm:mb-6">
           Дякуємо за реєстрацію! Ваш промокод на знижку 10% надіслано на вашу електронну пошту.
         </p>
 
         <Alert className="bg-gray-50 border-gray-200">
-          <AlertDescription className="text-sm text-gray-700">
+          <AlertDescription className="text-xs sm:text-sm text-gray-700">
             {discountCodeSent ? (
               <>
                 Перевірте вашу електронну пошту. Не отримали код?{" "}
@@ -625,7 +636,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
       <DialogFooter>
         <Button
           onClick={() => setShowAuthModal(false)}
-          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2"
+          className="w-full bg-gray-900 hover:bg-black text-white rounded-full py-2 text-sm"
         >
           Продовжити оформлення замовлення
         </Button>
@@ -637,7 +648,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
   const isDeliveryMethodSelected = !!form.watch("deliveryMethod")
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-12 overflow-x-hidden bg-[#f5f5f7] rounded-3xl">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 overflow-x-hidden bg-[#f5f5f7] rounded-2xl sm:rounded-3xl">
       {isOrderCreated ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -751,42 +762,48 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         </motion.div>
       ) : (
         <>
-          <h1 className="w-full text-4xl font-semibold text-gray-900 mb-6 text-center tracking-tight">
+          <h1 className="w-full text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-3 sm:mb-6 text-center tracking-tight">
             Оформлення замовлення
           </h1>
-          <p className="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
-            Заповніть форму нижче, щоб завершити ваше замовлення. Всі поля, позначені зірочкою (*), є обов&apos;язковими.
+          <p className="text-center text-sm sm:text-base text-gray-500 mb-6 sm:mb-10 max-w-2xl mx-auto">
+            Заповніть форму нижче, щоб завершити ваше замовлення. Всі поля, позначені зірочкою (*), є
+            обов&apos;язковими.
           </p>
+
+          {!email && (
+            <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 sm:p-6 rounded-3xl text-white mb-6 sm:mb-8 shadow-md">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                <div className="bg-white/20 p-3 rounded-full hidden sm:block">
+                  <Tag className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center sm:hidden mb-3">
+                    <div className="bg-white/20 p-2 rounded-full mr-3">
+                      <Tag className="h-5 w-5 text-white" />
+                    </div>
+                    <h3 className="text-lg font-medium">Знижка 10%</h3>
+                  </div>
+                  <h3 className="text-xl font-medium mb-2 hidden sm:block">Отримайте знижку 10% на ваше замовлення!</h3>
+                  <p className="text-gray-200 mb-4 text-sm sm:text-base">
+                    Зареєструйтеся або увійдіть, щоб отримати знижку 10% на ваше перше замовлення.
+                  </p>
+                  <Button
+                    onClick={() => setShowAuthModal(true)}
+                    className="w-full sm:w-auto bg-white text-gray-900 hover:bg-gray-100 rounded-full shadow-sm text-sm sm:text-base"
+                  >
+                    Зареєструватися та отримати знижку
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              {/* Promo banner for non-logged in users */}
-              {!email && (
-                <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-3xl text-white mb-8 shadow-md">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-white/20 p-3 rounded-full">
-                      <Tag className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-medium mb-2">Отримайте знижку 10% на ваше замовлення!</h3>
-                      <p className="text-gray-200 mb-4">
-                        Зареєструйтеся або увійдіть, щоб отримати знижку 10% на ваше перше замовлення.
-                      </p>
-                      <Button
-                        onClick={() => setShowAuthModal(true)}
-                        className="bg-white text-gray-900 hover:bg-gray-100 rounded-full shadow-sm"
-                      >
-                        Зареєструватися та отримати знижку
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                    <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm">
+                    <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
                       <User className="w-5 h-5 mr-2 text-gray-900" />
                       Особисті дані
                     </h2>
@@ -870,8 +887,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     </div>
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                    <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm">
+                    <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
                       <Truck className="w-5 h-5 mr-2 text-gray-900" />
                       Доставка
                     </h2>
@@ -956,8 +973,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     <input type="hidden" {...form.register("warehouseIndex")} />
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                    <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm">
+                    <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
                       <CreditCard className="w-5 h-5 mr-2 text-gray-900" />
                       Оплата
                     </h2>
@@ -987,18 +1004,17 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     />
                   </div>
 
-                  {/* Promocode Section */}
-                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                    <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm">
+                    <h2 className="text-xl font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
                       <Tag className="w-5 h-5 mr-2 text-gray-900" />
                       Промокод
                     </h2>
 
                     {appliedPromo ? (
                       <div className="flex flex-col space-y-4">
-                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border border-gray-200 shadow-sm">
-                          <div className="flex items-center">
-                            <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-4 rounded-2xl border border-gray-200 shadow-sm">
+                          <div className="flex items-center mb-3 sm:mb-0">
+                            <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" />
                             <div>
                               <p className="font-medium text-gray-900">{appliedPromo.code}</p>
                               <p className="text-sm text-gray-500">Знижка {appliedPromo.discount}% застосована</p>
@@ -1008,7 +1024,7 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                             variant="ghost"
                             size="sm"
                             onClick={handleRemovePromocode}
-                            className="text-gray-500 hover:text-gray-900"
+                            className="text-gray-500 hover:text-gray-900 self-end sm:self-auto"
                           >
                             Видалити
                           </Button>
@@ -1022,24 +1038,24 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <Input
                             placeholder="Введіть промокод"
                             value={promocode}
                             onChange={(e) => setPromocode(e.target.value)}
-                            className="rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50"
+                            className="rounded-2xl border-gray-200 shadow-sm h-12 transition-all focus:border-gray-400 focus:ring focus:ring-gray-100 focus:ring-opacity-50 mb-2 sm:mb-0"
                             disabled={isApplyingPromo || isSubmitting || !isDeliveryMethodSelected}
                           />
                           <Button
                             type="button"
                             onClick={handleApplyPromocode}
                             disabled={!promocode || isApplyingPromo || isSubmitting || !isDeliveryMethodSelected}
-                            className="bg-gray-900 hover:bg-black text-white rounded-2xl shadow-sm"
+                            className="bg-gray-900 hover:bg-black text-white rounded-2xl shadow-sm w-full sm:w-auto"
                           >
                             {isApplyingPromo ? (
                               <>
                                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                                Перевірка...
+                                <span className="whitespace-nowrap">Перевірка...</span>
                               </>
                             ) : (
                               "Застосувати"
@@ -1049,22 +1065,25 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
                         {promoError && (
                           <div className="flex items-center text-red-600 text-sm">
-                            <AlertCircle className="h-4 w-4 mr-1" />
-                            {promoError}
+                            <AlertCircle className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span>{promoError}</span>
                           </div>
                         )}
 
                         {!email && (
-                          <div className="text-sm text-gray-500 mt-2">
-                            <p>Зареєструйтеся, щоб отримати промокод на знижку 10% на перше замовлення.</p>
+                          <div className="text-sm text-gray-500 mt-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <p className="flex items-center">
+                              <Tag className="h-4 w-4 mr-2 text-gray-500" />
+                              Зареєструйтеся, щоб отримати промокод на знижку 10% на перше замовлення.
+                            </p>
                           </div>
                         )}
                       </div>
                     )}
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-                    <h2 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm">
+                    <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
                       <MessageSquare className="w-5 h-5 mr-2 text-gray-900" />
                       Коментар
                     </h2>
@@ -1109,31 +1128,31 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
             <div className="lg:sticky lg:top-6 self-start">
               <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
-                <div className="p-6 bg-[#f8f8fa]">
-                  <h2 className="text-xl font-medium flex items-center text-gray-900">
-                    <ShoppingCart className="w-5 h-5 mr-2 text-gray-900" />
+                <div className="p-4 sm:p-6 bg-[#f8f8fa]">
+                  <h2 className="text-lg sm:text-xl font-medium flex items-center text-gray-900">
+                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-900" />
                     Ваше замовлення
                   </h2>
                 </div>
-                <div className="max-h-[calc(100vh-300px)] overflow-y-auto p-6">
+                <div className="max-h-[calc(100vh-300px)] overflow-y-auto p-4 sm:p-6">
                   {cartData.map((item: any, index: number) => (
                     <div
                       key={index}
                       className="flex items-center mb-4 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0 last:mb-0"
                     >
-                      <div className="min-w-24 w-24 h-24 bg-[#f8f8fa] rounded-2xl flex items-center justify-center mr-4">
+                      <div className="min-w-16 w-16 h-16 sm:min-w-24 sm:w-24 sm:h-24 bg-[#f8f8fa] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4">
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          width={80}
-                          height={80}
+                          width={60}
+                          height={60}
                           className="object-contain"
                         />
                       </div>
                       <div className="flex-grow">
-                        <h3 className="text-base font-medium text-gray-900">{item.name}</h3>
-                        <p className="text-sm text-gray-500">Кількість: {item.quantity}</p>
-                        <p className="text-base font-medium text-gray-900">
+                        <h3 className="text-sm sm:text-base font-medium text-gray-900 line-clamp-2">{item.name}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500">Кількість: {item.quantity}</p>
+                        <p className="text-sm sm:text-base font-medium text-gray-900">
                           {item.price.toFixed(2)}
                           {Store.currency_sign}
                         </p>
@@ -1141,16 +1160,16 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                     </div>
                   ))}
                 </div>
-                <div className="px-6 pb-6">
+                <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                   <FreeDeliveryProgress
                     currentAmount={Number.parseFloat(formattedPriceToPay)}
                     threshold={Store.freeDelivery}
                   />
                 </div>
-                <div className="p-6 bg-[#f8f8fa]">
+                <div className="p-4 sm:p-6 bg-[#f8f8fa]">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-base text-gray-700">Підсумок:</span>
-                    <span className="text-base font-medium text-gray-900">
+                    <span className="text-sm sm:text-base text-gray-700">Підсумок:</span>
+                    <span className="text-sm sm:text-base font-medium text-gray-900">
                       {originalPrice.toFixed(2)}
                       {Store.currency_sign}
                     </span>
@@ -1158,8 +1177,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
 
                   {appliedPromo && (
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-base text-gray-700">Знижка ({appliedPromo.discount}%):</span>
-                      <span className="text-base font-medium text-green-600">
+                      <span className="text-sm sm:text-base text-gray-700">Знижка ({appliedPromo.discount}%):</span>
+                      <span className="text-sm sm:text-base font-medium text-green-600">
                         -{discountAmount}
                         {Store.currency_sign}
                       </span>
@@ -1167,24 +1186,24 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
                   )}
 
                   <div className="flex justify-between items-center">
-                    <span className="text-base text-gray-700">Доставка:</span>
-                    <span className="text-base font-medium text-gray-900">Безкоштовно</span>
+                    <span className="text-sm sm:text-base text-gray-700">Доставка:</span>
+                    <span className="text-sm sm:text-base font-medium text-gray-900">Безкоштовно</span>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
-                    <span className="text-lg font-medium text-gray-900">Загальна сума:</span>
-                    <span className="text-xl font-medium text-gray-900">
+                  <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200 flex justify-between items-center">
+                    <span className="text-base sm:text-lg font-medium text-gray-900">Загальна сума:</span>
+                    <span className="text-lg sm:text-xl font-medium text-gray-900">
                       {formattedPriceToPay}
                       {Store.currency_sign}
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="mt-6 bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
-                <h3 className="text-lg font-medium mb-2 flex items-center text-gray-900">
-                  <CheckCircle className="w-5 h-5 mr-2 text-gray-900" />
+              <div className="mt-4 sm:mt-6 bg-white p-4 sm:p-6 rounded-3xl border border-gray-200 shadow-sm">
+                <h3 className="text-base sm:text-lg font-medium mb-2 flex items-center text-gray-900">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-900" />
                   Гарантія безпеки
                 </h3>
-                <p className="text-base text-gray-700">
+                <p className="text-sm sm:text-base text-gray-700">
                   Ваші особисті дані в безпеці, ми використовуємо найновіші технології шифрування і не зберігаємо
                   інформації про рахунки клієнтів.
                 </p>
@@ -1194,9 +1213,8 @@ const CreateOrder = ({ userId, email }: { userId: string; email: string }) => {
         </>
       )}
 
-      {/* Auth Modal */}
       <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
-        <DialogContent className="sm:max-w-md p-6 rounded-2xl">
+        <DialogContent className="sm:max-w-md p-4 sm:p-6 rounded-2xl max-w-[calc(100%-32px)]">
           {authView === "login" && renderLoginView()}
           {authView === "register" && renderRegisterView()}
           {authView === "success" && renderSuccessView()}
@@ -1211,25 +1229,27 @@ const FreeDeliveryProgress = ({ currentAmount, threshold }: { currentAmount: num
   const remaining = threshold - currentAmount
 
   return (
-    <div className="bg-[#f8f8fa] rounded-2xl p-4 mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-gray-900">Безкоштовна доставка</span>
-        <span className="text-sm text-gray-500">
+    <div className="bg-[#f8f8fa] rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3 sm:mb-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+        <span className="text-xs sm:text-sm font-medium text-gray-900 mb-1 sm:mb-0">Безкоштовна доставка</span>
+        <span className="text-xs sm:text-sm text-gray-500">
           {currentAmount.toFixed(0)} / {threshold} {Store.currency_sign}
         </span>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-1.5 sm:h-2 bg-gray-200 rounded-full overflow-hidden">
         <div
           className="h-full bg-gray-900 rounded-full transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
       {remaining > 0 ? (
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-[10px] sm:text-xs text-gray-500 mt-1.5 sm:mt-2">
           Додайте ще {remaining.toFixed(0)} {Store.currency_sign} для безкоштовної доставки
         </p>
       ) : (
-        <p className="text-xs font-medium text-gray-900 mt-2">Ви отримали безкоштовну доставку!</p>
+        <p className="text-[10px] sm:text-xs font-medium text-gray-900 mt-1.5 sm:mt-2">
+          Ви отримали безкоштовну доставку!
+        </p>
       )}
     </div>
   )

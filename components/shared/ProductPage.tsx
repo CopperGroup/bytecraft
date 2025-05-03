@@ -626,9 +626,9 @@ export default function ProductPage({
               <div className="pt-2 sm:pt-4">
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span itemProp="offers" itemScope itemType="https://schema.org/Offer">
-                    <span className="text-2xl sm:text-3xl font-medium text-gray-900" itemProp="price">
-                      {Store.currency_sign}
-                      {product.priceToShow}
+                    <span className="text-2xl sm:text-3xl font-medium text-gray-900" itemScope itemType="http://schema.org/Offer">
+                      <span>{Store.currency_sign}</span>
+                      <span itemProp="price" content="2040">{product.priceToShow}</span>
                     </span>
                     <meta itemProp="priceCurrency" content="UAH" />
                     <link
