@@ -43,7 +43,7 @@ const ProductCard = ({
   reviews = [],
 }: Props) => {
   // Check if product is a best seller (more than 20 reviews)
-  const isBestSeller = reviews.length > 20
+  const isBestSeller = reviews.length > 30
 
   // Filter reviews to only show ratings >= 3
   const filteredReviews = reviews.filter((review) => review.rating >= 3)
@@ -157,6 +157,7 @@ const ProductCard = ({
           name={name}
           price={priceToShow}
           priceWithoutDiscount={price}
+          url={url}
           className="w-full"
         />
       </div>

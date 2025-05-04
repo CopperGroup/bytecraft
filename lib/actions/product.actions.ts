@@ -770,4 +770,3 @@ export async function leaveReview(params: { productId: string, userId: string | 
     throw new Error(`Error adding review to the product: ${error.message}`)
   }
 }
-

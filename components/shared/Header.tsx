@@ -11,12 +11,14 @@ import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } fro
 import BurgerMenu from "./BurgerMenu"
 import { trackFacebookEvent } from "@/helpers/pixel"
 import { Store } from "@/constants/store"
+import Image from "next/image"
 
 const Links = [
   { label: "Головна", href: "/" },
   { label: "Каталог", href: "/catalog?page=1&sort=default" },
   { label: "Обране", href: "/liked" },
   { label: "Мої замовлення", href: "/myOrders" },
+  { label: "Контакти", href: "/contact"}
 ]
 
 const infoNames = ["Контакти", "Доставка та оплата", "Гарантія та сервіс"]
@@ -51,6 +53,7 @@ export default function Header({ email, user }: { email: string; user: string })
         <div>
           <Link href="/" className="w-fit flex gap-2 justify-center items-center">
             {/* <Logo /> */}
+            <Image src="/assets/logo.png" height={32} width={32} alt="Logo"/>
             <p className="text-lg font-medium text-gray-900">{Store.name}</p>
           </Link>
         </div>

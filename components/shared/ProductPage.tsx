@@ -39,6 +39,7 @@ export type Product = {
   articleNumber?: string
   reviews?: Review[]
   isAvailable: boolean
+  url: string
 }
 
 // Lightweight loading component for reviews
@@ -710,6 +711,7 @@ export default function ProductPage({
                   image={product.images[0]}
                   price={product.priceToShow}
                   priceWithoutDiscount={product.price}
+                  url={product.url}
                   className="w-full py-3 sm:py-4 text-sm sm:text-base font-medium rounded-full"
                 />
                 <AddToCart
@@ -719,6 +721,7 @@ export default function ProductPage({
                   price={product.priceToShow}
                   priceWithoutDiscount={product.price}
                   variant="full"
+                  url={product.url}
                   className="w-full py-3 sm:py-4 text-sm sm:text-base font-medium rounded-full"
                 />
               </div>

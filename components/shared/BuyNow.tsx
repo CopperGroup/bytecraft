@@ -15,9 +15,10 @@ type BuyNowProps = {
   price: number
   priceWithoutDiscount: number
   className?: string
+  url: string
 }
 
-const BuyNow = ({ id, name, image, price, priceWithoutDiscount, className }: BuyNowProps) => {
+const BuyNow = ({ id, name, image, price, priceWithoutDiscount, className , url}: BuyNowProps) => {
   //@ts-ignore
   const { cartData, setPriceToPay, setCartData } = useAppContext()
 
@@ -37,7 +38,7 @@ const BuyNow = ({ id, name, image, price, priceWithoutDiscount, className }: Buy
     if (exist == 0) {
       setCartData((prev: any) => [
         ...prev,
-        { id: id, name: name, image: image, price: price, priceWithoutDiscount: priceWithoutDiscount, quantity: 1 },
+        { id: id, name: name, image: image, price: price, priceWithoutDiscount: priceWithoutDiscount, quantity: 1, url},
       ])
 
       await productAddedToCart(id)

@@ -495,7 +495,7 @@ export default function PurchaseNotification({
   if (!notifications.length) return null
 
   return (
-    <div className="fixed bottom-2 left-2 z-50 flex flex-col gap-2 max-w-[280px] sm:max-w-[320px] sm:bottom-4 sm:left-4">
+    <div className="fixed bottom-2 left-2 z-[120] flex flex-col gap-2 max-w-[280px] sm:max-w-[320px] sm:bottom-4 sm:left-4">
       {notifications.map((notification) => (
         <div
           key={notification.id}

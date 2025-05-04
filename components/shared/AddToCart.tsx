@@ -14,9 +14,10 @@ type AddToCartProps = {
   priceWithoutDiscount: number
   variant?: "full"
   className?: string
+  url: string
 }
 
-const AddToCart = ({ id, name, image, price, priceWithoutDiscount, variant, className }: AddToCartProps) => {
+const AddToCart = ({ id, name, image, price, priceWithoutDiscount, variant, className, url }: AddToCartProps) => {
   //@ts-ignore
   const { cartData, setCartData } = useAppContext()
 
@@ -34,7 +35,7 @@ const AddToCart = ({ id, name, image, price, priceWithoutDiscount, variant, clas
     if (exist == 0) {
       setCartData((prev: any) => [
         ...prev,
-        { id: id, name: name, image: image, price: price, priceWithoutDiscount: priceWithoutDiscount, quantity: 1 },
+        { id: id, name: name, image: image, price: price, priceWithoutDiscount: priceWithoutDiscount, quantity: 1, url: url},
       ])
 
       await productAddedToCart(id)
