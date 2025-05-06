@@ -27,13 +27,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${Store.domain}/`,
     },
     {
-      url: `${Store.domain}/info/contacts`,
+      url: `${Store.domain}/contact`,
     },
     {
-      url: `${Store.domain}/info/warranty-services`,
+      url: `${Store.domain}/warranty`,
     },
     {
-      url: `${Store.domain}/info/delivery-payment`,
+      url: `${Store.domain}/shipping`,
     },
     ...productEntries,
   ];
